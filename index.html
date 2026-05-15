@@ -616,6 +616,23 @@
       <p>Escucha, repite y mejora tu acento</p>
     </div>
 
+    <!-- Voice selector -->
+    <div class="card" style="padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px;">🗣️</span>
+      <div style="flex:1;">
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:600;">VOZ</div>
+        <select id="voice-select" onchange="setVoice(this.value)" style="
+          background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+          color:var(--txt0);font-size:13px;font-family:inherit;padding:6px 8px;
+          width:100%;outline:none;cursor:pointer;">
+          <option value="">Cargando voces...</option>
+        </select>
+      </div>
+      <button onclick="speak(speakList[speakIndex]?.text||'Hello',0.82)" style="
+        background:var(--p1);border:none;border-radius:50%;width:36px;height:36px;
+        color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;">▶</button>
+    </div>
+
     <!-- Filters -->
     <div class="speak-filters" id="speak-filters">
       <div class="filter-chip active" onclick="setSpeakFilter('all',this)">Todos</div>
@@ -1274,24 +1291,41 @@ function nextWord(){
   showSpeakWord();
 }
 
-function getBestVoice(){
+let selectedVoiceName = localStorage.getItem('speakup_voice') || '';
+
+function loadVoices(){
   const voices = window.speechSynthesis.getVoices();
-  const priority = [
-    'Google US English',
-    'Google UK English Female',
-    'Google UK English Male',
-    'Samantha',
-    'Alex',
-    'Karen',
-    'Daniel',
-  ];
-  for(const name of priority){
-    const v = voices.find(v => v.name === name);
-    if(v) return v;
+  const sel = document.getElementById('voice-select');
+  if(!sel || !voices.length) return;
+
+  // Solo voces en inglés
+  const enVoices = voices.filter(v => v.lang.startsWith('en'));
+  if(!enVoices.length) return;
+
+  sel.innerHTML = enVoices.map(v =>
+    `<option value="${v.name}" ${v.name === selectedVoiceName ? 'selected' : ''}>
+      ${v.name} (${v.lang})${v.localService ? '' : ' ⭐'}
+    </option>`
+  ).join('');
+
+  // Auto-seleccionar la mejor si no hay una guardada
+  if(!selectedVoiceName){
+    const priority = ['Google US English','Google UK English Female','Samantha','Alex','Karen'];
+    const best = priority.map(n => enVoices.find(v => v.name === n)).find(Boolean) || enVoices[0];
+    if(best){ selectedVoiceName = best.name; sel.value = best.name; }
   }
-  return voices.find(v => v.lang.startsWith('en') && !v.localService) ||
-         voices.find(v => v.lang.startsWith('en')) ||
-         null;
+}
+
+function setVoice(name){
+  selectedVoiceName = name;
+  localStorage.setItem('speakup_voice', name);
+  // Preview de la voz seleccionada
+  speak('Hello, this is a test.', 0.88);
+}
+
+function getSelectedVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  return voices.find(v => v.name === selectedVoiceName) || null;
 }
 
 function speak(text, rate = 0.88){
@@ -1300,10 +1334,14 @@ function speak(text, rate = 0.88){
   utter.lang = 'en-US';
   utter.rate = rate;
   utter.pitch = 1;
-  const voice = getBestVoice();
+  const voice = getSelectedVoice();
   if(voice) utter.voice = voice;
   window.speechSynthesis.speak(utter);
 }
+
+// Las voces cargan de forma asíncrona en algunos navegadores
+window.speechSynthesis.onvoiceschanged = loadVoices;
+setTimeout(loadVoices, 500);
 
 function speakWord(){
   const item = speakList[speakIndex];
