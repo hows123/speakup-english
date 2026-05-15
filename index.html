@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>SpeakUp — Aprende Inglés</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Variables ─────────────────────────────────────────── */
+    :root {
+      --bg0: #080812;
+      --bg1: #0f0f1e;
+      --bg2: #16172b;
+      --bg3: #1e1f38;
+      --card: #1a1b30;
+      --border: #252645;
+      --p1: #7c3aed;
+      --p2: #9f5cf7;
+      --p3: #c084fc;
+      --cyan: #06d6d6;
+      --green: #10d98a;
+      --orange: #f59e0b;
+      --red: #f43f5e;
+      --gold: #fbbf24;
+      --txt0: #f0f0ff;
+      --txt1: #a0a0c0;
+      --txt2: #606080;
+      --r: 18px;
+      --r-sm: 10px;
+      --shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg0);
+      color: var(--txt0);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────── */
+    #app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      position: relative;
+      padding-bottom: 90px;
+    }
+    .view { display: none; padding: 20px 16px; animation: fadeUp .3s ease; }
+    .view.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Top Bar ─────────────────────────────────────────────── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px 0;
+      position: sticky; top: 0; z-index: 10;
+      background: linear-gradient(to bottom, var(--bg0) 70%, transparent);
+    }
+    .topbar h1 { font-size: 22px; font-weight: 800; }
+    .topbar .streak-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(245,158,11,.15);
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: 20px; padding: 5px 12px;
+      font-weight: 700; font-size: 14px; color: var(--orange);
+    }
+    .xp-pill {
+      background: rgba(124,58,237,.2);
+      border: 1px solid rgba(124,58,237,.4);
+      border-radius: 20px; padding: 5px 12px;
+      font-weight: 700; font-size: 13px; color: var(--p3);
+    }
+
+    /* ─── Bottom Nav ──────────────────────────────────────────── */
+    #bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding: 0 8px; padding-bottom: env(safe-area-inset-bottom, 8px);
+      z-index: 100;
+    }
+    .nav-btn {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+      padding: 10px 4px;
+      background: none; border: none; cursor: pointer;
+      color: var(--txt2); transition: color .2s;
+      font-size: 11px; font-weight: 600; font-family: inherit;
+    }
+    .nav-btn .nav-icon { font-size: 22px; transition: transform .2s; }
+    .nav-btn.active { color: var(--p2); }
+    .nav-btn.active .nav-icon { transform: scale(1.15); }
+
+    /* ─── Cards ───────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .card-glass {
+      background: rgba(26,27,48,.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: var(--r);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    /* ─── Buttons ─────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 24px; border-radius: 50px;
+      border: none; cursor: pointer;
+      font-size: 15px; font-weight: 700; font-family: inherit;
+      transition: all .2s; outline: none; width: 100%;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--p1), var(--p2));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124,58,237,.4);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(124,58,237,.5); }
+    .btn-primary:active { transform: scale(.97); }
+    .btn-secondary {
+      background: var(--bg3); color: var(--txt0);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-green { background: linear-gradient(135deg, #059669, var(--green)); color: #fff; box-shadow: 0 4px 20px rgba(16,217,138,.3); }
+    .btn-red { background: linear-gradient(135deg, #be123c, var(--red)); color: #fff; }
+    .btn-sm { padding: 9px 18px; font-size: 13px; width: auto; }
+    .btn-icon {
+      width: 52px; height: 52px; border-radius: 50%; padding: 0;
+      font-size: 20px; width: auto; min-width: 52px;
+    }
+
+    /* ─── Progress Bar ────────────────────────────────────────── */
+    .progress-wrap {
+      background: var(--bg3); border-radius: 50px; height: 10px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%; border-radius: 50px;
+      background: linear-gradient(90deg, var(--p1), var(--cyan));
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-bar.green { background: linear-gradient(90deg, #059669, var(--green)); }
+    .progress-bar.orange { background: linear-gradient(90deg, #d97706, var(--orange)); }
+
+    /* ─── XP Bar ──────────────────────────────────────────────── */
+    .xp-section { margin-bottom: 20px; }
+    .xp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .level-badge {
+      background: linear-gradient(135deg, var(--p1), var(--cyan));
+      border-radius: 8px; padding: 3px 10px;
+      font-size: 12px; font-weight: 800;
+    }
+
+    /* ─── HOME VIEW ───────────────────────────────────────────── */
+    .greeting { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+    .greeting span { background: linear-gradient(135deg, var(--p2), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sub-greeting { color: var(--txt1); font-size: 14px; margin-bottom: 20px; }
+
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 14px 10px; text-align: center;
+    }
+    .stat-card .stat-icon { font-size: 24px; margin-bottom: 6px; }
+    .stat-card .stat-val { font-size: 20px; font-weight: 800; }
+    .stat-card .stat-lbl { font-size: 11px; color: var(--txt2); font-weight: 500; margin-top: 2px; }
+
+    .section-title {
+      font-size: 17px; font-weight: 800; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .section-title .see-all { font-size: 13px; color: var(--p3); font-weight: 600; cursor: pointer; }
+
+    .daily-goal-card { position: relative; overflow: hidden; }
+    .daily-goal-card .bg-glow {
+      position: absolute; top: -30px; right: -30px;
+      width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,.3), transparent);
+      pointer-events: none;
+    }
+
+    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .quick-btn {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 18px 14px;
+      cursor: pointer; transition: all .2s; text-align: left;
+    }
+    .quick-btn:hover { border-color: var(--p1); transform: translateY(-2px); }
+    .quick-btn .qb-icon { font-size: 28px; margin-bottom: 8px; }
+    .quick-btn .qb-title { font-size: 14px; font-weight: 700; }
+    .quick-btn .qb-desc { font-size: 12px; color: var(--txt2); margin-top: 2px; }
+
+    /* ─── SPEAK VIEW ──────────────────────────────────────────── */
+    .speak-header { text-align: center; margin-bottom: 24px; }
+    .speak-header h2 { font-size: 22px; font-weight: 800; }
+    .speak-header p { color: var(--txt1); font-size: 14px; margin-top: 6px; }
+
+    .word-card {
+      background: linear-gradient(135deg, var(--bg2), var(--card));
+      border: 1px solid var(--border); border-radius: 24px;
+      padding: 32px 24px; text-align: center; margin-bottom: 20px;
+      position: relative; overflow: hidden;
+    }
+    .word-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,.08), rgba(6,214,214,.05));
+      pointer-events: none;
+    }
+    .word-display { font-size: 42px; font-weight: 900; letter-spacing: -1px; }
+    .phonetic { font-size: 16px; color: var(--cyan); margin-top: 6px; font-weight: 500; }
+    .word-category { display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 20px; background: rgba(124,58,237,.2); font-size: 12px; color: var(--p3); font-weight: 600; }
+    .example-text { color: var(--txt1); font-size: 14px; margin-top: 14px; font-style: italic; line-height: 1.6; }
+
+    .controls-row { display: flex; gap: 12px; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .record-btn {
+      width: 80px; height: 80px; border-radius: 50%; border: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 28px; transition: all .2s;
+      background: linear-gradient(135deg, var(--p1), var(--p2));
+      box-shadow: 0 0 30px rgba(124,58,237,.5);
+    }
+    .record-btn.recording {
+      animation: pulse-ring 1s infinite;
+      background: linear-gradient(135deg, var(--red), #be123c);
+      box-shadow: 0 0 40px rgba(244,63,94,.6);
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(244,63,94,.5); }
+      70%  { box-shadow: 0 0 0 18px rgba(244,63,94,0); }
+      100% { box-shadow: 0 0 0 0 rgba(244,63,94,0); }
+    }
+    .listen-btn {
+      width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg3); cursor: pointer; font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s; color: var(--txt0);
+    }
+    .listen-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    .score-display {
+      text-align: center; padding: 20px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); margin-bottom: 16px;
+    }
+    .score-ring {
+      width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; font-weight: 900;
+      border: 4px solid var(--green);
+      box-shadow: 0 0 20px rgba(16,217,138,.3);
+    }
+    .score-ring.good { border-color: var(--green); color: var(--green); box-shadow: 0 0 20px rgba(16,217,138,.3); }
+    .score-ring.ok   { border-color: var(--orange); color: var(--orange); box-shadow: 0 0 20px rgba(245,158,11,.3); }
+    .score-ring.bad  { border-color: var(--red); color: var(--red); box-shadow: 0 0 20px rgba(244,63,94,.3); }
+
+    .tip-box {
+      background: rgba(6,214,214,.08); border: 1px solid rgba(6,214,214,.25);
+      border-radius: var(--r-sm); padding: 12px 14px;
+      font-size: 13px; color: var(--cyan); line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .tip-box strong { color: #fff; }
+
+    .heard-text { font-size: 13px; color: var(--txt1); text-align: center; margin-bottom: 14px; }
+    .heard-text span { color: var(--txt0); font-weight: 600; }
+
+    .nav-row { display: flex; gap: 10px; }
+
+    .speak-filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+    .speak-filters::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      flex-shrink: 0; padding: 7px 14px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--bg2);
+      font-size: 13px; font-weight: 600; cursor: pointer; color: var(--txt1);
+      transition: all .2s; white-space: nowrap;
+    }
+    .filter-chip.active { background: var(--p1); border-color: var(--p1); color: #fff; }
+
+    /* ─── VOCAB VIEW ──────────────────────────────────────────── */
+    .flashcard-container {
+      perspective: 1000px; height: 280px; margin-bottom: 20px; cursor: pointer;
+    }
+    .flashcard {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d; transition: transform .6s cubic-bezier(.4,0,.2,1);
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0; border-radius: 24px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 24px; text-align: center;
+    }
+    .card-front {
+      background: linear-gradient(135deg, var(--p1) 0%, #4338ca 100%);
+      box-shadow: 0 12px 40px rgba(124,58,237,.4);
+    }
+    .card-back {
+      background: linear-gradient(135deg, #0891b2, #0e7490);
+      box-shadow: 0 12px 40px rgba(6,214,214,.3);
+      transform: rotateY(180deg);
+    }
+    .card-emoji { font-size: 52px; margin-bottom: 10px; }
+    .card-word { font-size: 36px; font-weight: 900; color: #fff; }
+    .card-phonetic { font-size: 16px; color: rgba(255,255,255,.7); margin-top: 4px; }
+    .card-hint { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 12px; }
+    .card-translation { font-size: 28px; font-weight: 800; color: #fff; }
+    .card-example { font-size: 14px; color: rgba(255,255,255,.8); margin-top: 10px; font-style: italic; line-height: 1.5; }
+    .card-category { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 8px; }
+
+    .vocab-actions { display: flex; gap: 12px; margin-bottom: 20px; }
+
+    .vocab-progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .vocab-progress-row .progress-wrap { flex: 1; }
+    .vocab-count { font-size: 13px; color: var(--txt1); white-space: nowrap; }
+
+    .vocab-cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+    .vocab-cats::-webkit-scrollbar { display: none; }
+
+    /* ─── LESSONS VIEW ────────────────────────────────────────── */
+    .lesson-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 16px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: all .2s;
+    }
+    .lesson-card:hover { border-color: var(--p1); transform: translateX(4px); }
+    .lesson-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .lesson-info { flex: 1; }
+    .lesson-title { font-size: 15px; font-weight: 700; }
+    .lesson-desc { font-size: 12px; color: var(--txt2); margin-top: 2px; }
+    .lesson-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .lesson-stars { color: var(--gold); font-size: 12px; }
+    .lesson-count { font-size: 11px; color: var(--txt2); }
+    .lesson-arrow { color: var(--txt2); font-size: 20px; }
+
+    /* ─── EXERCISE ────────────────────────────────────────────── */
+    .exercise-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .back-btn {
+      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
+      background: var(--bg2); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; color: var(--txt0); flex-shrink: 0;
+    }
+    .ex-progress { flex: 1; }
+    .ex-progress .progress-wrap { height: 8px; }
+    .ex-count { font-size: 13px; color: var(--txt1); white-space: nowrap; }
+
+    .question-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 28px 22px; margin-bottom: 20px; text-align: center;
+    }
+    .question-type { font-size: 12px; color: var(--p3); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .question-text { font-size: 20px; font-weight: 700; line-height: 1.4; }
+    .question-blank {
+      display: inline-block; min-width: 80px; border-bottom: 2px solid var(--p1);
+      color: var(--p3); font-weight: 700;
+    }
+    .audio-question { margin: 16px 0; }
+
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .option-btn {
+      background: var(--bg2); border: 2px solid var(--border);
+      border-radius: var(--r-sm); padding: 14px 10px;
+      cursor: pointer; font-size: 14px; font-weight: 600;
+      color: var(--txt0); transition: all .2s; font-family: inherit; text-align: center;
+    }
+    .option-btn:hover { border-color: var(--p1); background: rgba(124,58,237,.1); }
+    .option-btn.selected { border-color: var(--p1); background: rgba(124,58,237,.2); color: var(--p2); }
+    .option-btn.correct { border-color: var(--green); background: rgba(16,217,138,.15); color: var(--green); }
+    .option-btn.wrong  { border-color: var(--red); background: rgba(244,63,94,.1); color: var(--red); }
+
+    .feedback-bar {
+      border-radius: var(--r-sm); padding: 16px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px; font-size: 14px; font-weight: 600;
+    }
+    .feedback-bar.correct { background: rgba(16,217,138,.12); border: 1px solid rgba(16,217,138,.3); color: var(--green); }
+    .feedback-bar.wrong   { background: rgba(244,63,94,.1); border: 1px solid rgba(244,63,94,.3); color: var(--red); }
+    .feedback-bar .fb-icon { font-size: 22px; }
+
+    /* ─── PROFILE VIEW ────────────────────────────────────────── */
+    .profile-header { text-align: center; padding: 10px 0 20px; }
+    .avatar {
+      width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 12px;
+      background: linear-gradient(135deg, var(--p1), var(--cyan));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    .profile-name { font-size: 22px; font-weight: 800; }
+    .profile-level { font-size: 14px; color: var(--p3); margin-top: 4px; }
+
+    .big-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .big-stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 18px; text-align: center;
+    }
+    .big-stat .bs-val { font-size: 32px; font-weight: 900; background: linear-gradient(135deg, var(--p2), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .big-stat .bs-lbl { font-size: 12px; color: var(--txt2); margin-top: 4px; }
+
+    .achievements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .achievement {
+      text-align: center; padding: 12px 6px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+    }
+    .achievement.locked { opacity: .35; filter: grayscale(1); }
+    .achievement .ach-icon { font-size: 26px; margin-bottom: 4px; }
+    .achievement .ach-name { font-size: 10px; color: var(--txt2); font-weight: 600; line-height: 1.2; }
+
+    /* ─── Streak calendar ─────────────────────────────────────── */
+    .streak-cal { display: flex; gap: 5px; }
+    .streak-day {
+      flex: 1; height: 32px; border-radius: 6px;
+      background: var(--bg3); display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: var(--txt2); font-weight: 600;
+    }
+    .streak-day.done { background: linear-gradient(135deg, var(--p1), var(--p2)); color: #fff; }
+    .streak-day.today { border: 2px solid var(--p2); }
+
+    /* ─── Misc ────────────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--txt1); }
+    .empty-state .es-icon { font-size: 52px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+    .badge-purple { background: rgba(124,58,237,.2); color: var(--p3); }
+    .badge-green  { background: rgba(16,217,138,.15); color: var(--green); }
+    .badge-orange { background: rgba(245,158,11,.15); color: var(--orange); }
+
+    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      width: 100%; max-width: 430px;
+      background: var(--bg2); border-radius: 28px 28px 0 0;
+      padding: 24px 20px 40px; border-top: 1px solid var(--border);
+      animation: slideUp .3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+    .modal h3 { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+    .modal p { font-size: 14px; color: var(--txt1); text-align: center; margin-bottom: 20px; line-height: 1.6; }
+
+    .toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
+      z-index: 300; background: var(--green); color: #000;
+      padding: 10px 20px; border-radius: 50px;
+      font-size: 14px; font-weight: 700; transition: transform .3s; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); color: #fff; }
+
+    .xp-burst {
+      position: fixed; top: 40%; left: 50%; transform: translate(-50%,-50%) scale(0);
+      z-index: 400; font-size: 28px; font-weight: 900;
+      color: var(--gold); text-shadow: 0 0 20px rgba(251,191,36,.6);
+      pointer-events: none; transition: all .5s cubic-bezier(.4,0,.2,1);
+    }
+    .xp-burst.show { transform: translate(-50%,-120%) scale(1); opacity: 0; }
+
+    input[type="text"] {
+      background: var(--bg3); border: 2px solid var(--border);
+      border-radius: var(--r-sm); padding: 14px 16px;
+      color: var(--txt0); font-size: 16px; font-family: inherit;
+      width: 100%; outline: none; transition: border-color .2s;
+      margin-bottom: 12px;
+    }
+    input[type="text"]:focus { border-color: var(--p1); }
+    input[type="text"]::placeholder { color: var(--txt2); }
+
+    /* Loading dots */
+    .dots span {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--p2); margin: 0 3px;
+      animation: bounce .9s infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: .15s; }
+    .dots span:nth-child(3) { animation-delay: .3s; }
+    @keyframes bounce {
+      0%,60%,100% { transform: translateY(0); }
+      30%          { transform: translateY(-10px); }
+    }
+
+    @media (prefers-color-scheme: light) {
+      /* keep dark theme regardless */
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── TOP BAR ── -->
+  <div class="topbar" id="topbar">
+    <span class="streak-badge">🔥 <span id="tb-streak">0</span></span>
+    <div style="font-size:18px;font-weight:900;letter-spacing:-0.5px;">SpeakUp</div>
+    <span class="xp-pill">⚡ <span id="tb-xp">0</span> XP</span>
+  </div>
+
+  <!-- ════════════════ HOME ════════════════ -->
+  <div class="view active" id="view-home">
+    <div style="margin-bottom:20px;">
+      <div class="greeting">Hola, <span id="home-name">Learner</span> 👋</div>
+      <div class="sub-greeting">Sigue aprendiendo inglés hoy</div>
+    </div>
+
+    <!-- XP Bar -->
+    <div class="xp-section">
+      <div class="xp-header">
+        <span class="level-badge" id="level-badge">Nivel 1</span>
+        <span style="font-size:13px;color:var(--txt1);"><span id="xp-current">0</span> / <span id="xp-next">100</span> XP</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="xp-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-val" id="stat-streak">0</div>
+        <div class="stat-lbl">Racha días</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-val" id="stat-words">0</div>
+        <div class="stat-lbl">Palabras</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-val" id="stat-accuracy">0%</div>
+        <div class="stat-lbl">Precisión</div>
+      </div>
+    </div>
+
+    <!-- Daily goal -->
+    <div class="card daily-goal-card" style="margin-bottom:20px;">
+      <div class="bg-glow"></div>
+      <div class="section-title" style="margin-bottom:10px;">
+        Meta diaria
+        <span class="badge badge-orange" id="daily-badge">0/5</span>
+      </div>
+      <div class="progress-wrap" style="margin-bottom:8px;">
+        <div class="progress-bar orange" id="daily-bar" style="width:0%"></div>
+      </div>
+      <div style="font-size:12px;color:var(--txt2);">Completa 5 ejercicios para mantener tu racha 🔥</div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="section-title">Practicar ahora</div>
+    <div class="quick-actions">
+      <div class="quick-btn" onclick="goTo('speak')">
+        <div class="qb-icon">🎤</div>
+        <div class="qb-title">Pronunciación</div>
+        <div class="qb-desc">Habla con IA</div>
+      </div>
+      <div class="quick-btn" onclick="goTo('vocab')">
+        <div class="qb-icon">🃏</div>
+        <div class="qb-title">Vocabulario</div>
+        <div class="qb-desc">Tarjetas inteligentes</div>
+      </div>
+      <div class="quick-btn" onclick="goTo('lessons')">
+        <div class="qb-icon">📖</div>
+        <div class="qb-title">Lecciones</div>
+        <div class="qb-desc">Gramática y más</div>
+      </div>
+      <div class="quick-btn" onclick="goTo('profile')">
+        <div class="qb-icon">🏆</div>
+        <div class="qb-title">Logros</div>
+        <div class="qb-desc">Tu progreso</div>
+      </div>
+    </div>
+
+    <!-- Streak week -->
+    <div class="section-title">Esta semana</div>
+    <div class="card">
+      <div class="streak-cal" id="streak-cal"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════ SPEAK ════════════════ -->
+  <div class="view" id="view-speak">
+    <div class="speak-header">
+      <h2>🎤 Laboratorio de Pronunciación</h2>
+      <p>Escucha, repite y mejora tu acento</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="speak-filters" id="speak-filters">
+      <div class="filter-chip active" onclick="setSpeakFilter('all',this)">Todos</div>
+      <div class="filter-chip" onclick="setSpeakFilter('th',this)">Sonido TH</div>
+      <div class="filter-chip" onclick="setSpeakFilter('vowels',this)">Vocales</div>
+      <div class="filter-chip" onclick="setSpeakFilter('r',this)">Sonido R</div>
+      <div class="filter-chip" onclick="setSpeakFilter('sentences',this)">Frases</div>
+    </div>
+
+    <!-- Word Card -->
+    <div class="word-card" id="speak-word-card">
+      <div class="word-display" id="speak-word">—</div>
+      <div class="phonetic" id="speak-phonetic">—</div>
+      <div class="word-category" id="speak-category"></div>
+      <div class="example-text" id="speak-example"></div>
+    </div>
+
+    <!-- Score (hidden initially) -->
+    <div id="score-section" style="display:none;">
+      <div class="score-display">
+        <div class="score-ring" id="score-ring">—%</div>
+        <div style="font-size:16px;font-weight:700;" id="score-msg">—</div>
+        <div style="font-size:13px;color:var(--txt1);margin-top:4px;" id="score-sub">—</div>
+      </div>
+      <div class="heard-text">Escuché: "<span id="heard-word">—</span>"</div>
+    </div>
+
+    <!-- Tip -->
+    <div class="tip-box" id="speak-tip">
+      💡 <strong>Tip:</strong> <span id="tip-text">Presiona el micrófono y di la palabra en voz alta.</span>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-row">
+      <button class="listen-btn" id="prev-btn" onclick="prevWord()" title="Anterior">◀</button>
+      <button class="record-btn" id="record-btn" onclick="toggleRecording()" title="Grabar">🎤</button>
+      <button class="listen-btn" id="listen-btn" onclick="speakWord()" title="Escuchar">🔊</button>
+      <button class="listen-btn" id="next-btn" onclick="nextWord()" title="Siguiente">▶</button>
+    </div>
+
+    <div style="text-align:center;font-size:13px;color:var(--txt2);margin-bottom:16px;" id="record-status">
+      Toca 🎤 para grabar tu pronunciación
+    </div>
+
+    <!-- Progress of words done -->
+    <div class="card" style="padding:14px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--txt1);margin-bottom:8px;">
+        <span>Ejercicios completados</span>
+        <span id="speak-progress-lbl">0 / <span id="speak-total">0</span></span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="speak-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ VOCAB ════════════════ -->
+  <div class="view" id="view-vocab">
+    <div class="speak-header">
+      <h2>🃏 Tarjetas de Vocabulario</h2>
+      <p>Toca la tarjeta para ver la traducción</p>
+    </div>
+
+    <!-- Category filters -->
+    <div class="vocab-cats" id="vocab-cats">
+      <div class="filter-chip active" onclick="setVocabCat('all',this)">Todas</div>
+      <div class="filter-chip" onclick="setVocabCat('adjectives',this)">Adjetivos</div>
+      <div class="filter-chip" onclick="setVocabCat('verbs',this)">Verbos</div>
+      <div class="filter-chip" onclick="setVocabCat('nouns',this)">Sustantivos</div>
+      <div class="filter-chip" onclick="setVocabCat('phrases',this)">Frases</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="vocab-progress-row">
+      <span style="font-size:13px;color:var(--txt1);white-space:nowrap;">Tarjeta</span>
+      <div class="progress-wrap" style="flex:1;">
+        <div class="progress-bar green" id="vocab-bar" style="width:0%"></div>
+      </div>
+      <span class="vocab-count" id="vocab-count-lbl">1 / 1</span>
+    </div>
+
+    <!-- Flashcard -->
+    <div class="flashcard-container" id="fc-container" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="card-face card-front" id="card-front">
+          <div class="card-emoji" id="fc-emoji">—</div>
+          <div class="card-word" id="fc-word">—</div>
+          <div class="card-phonetic" id="fc-phonetic">—</div>
+          <div class="card-hint">Toca para ver traducción</div>
+        </div>
+        <div class="card-face card-back" id="card-back">
+          <div class="card-translation" id="fc-translation">—</div>
+          <div class="card-example" id="fc-example">—</div>
+          <div class="card-category" id="fc-cat">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="vocab-actions">
+      <button class="btn btn-red" style="flex:1;" onclick="rateVocab(0)">🔁 Repetir</button>
+      <button class="btn btn-secondary btn-icon" onclick="speakVocabWord()" style="flex:0.4;">🔊</button>
+      <button class="btn btn-green" style="flex:1;" onclick="rateVocab(1)">✓ Lo sé</button>
+    </div>
+
+    <button class="btn btn-secondary" onclick="nextVocab()">Siguiente →</button>
+  </div>
+
+  <!-- ════════════════ LESSONS ════════════════ -->
+  <div class="view" id="view-lessons">
+    <div class="speak-header">
+      <h2>📖 Lecciones</h2>
+      <p>Gramática, escucha y más</p>
+    </div>
+
+    <div id="lessons-list"></div>
+  </div>
+
+  <!-- ════════════════ EXERCISE ════════════════ -->
+  <div class="view" id="view-exercise">
+    <div class="exercise-header">
+      <div class="back-btn" onclick="goTo('lessons')">←</div>
+      <div class="ex-progress">
+        <div class="progress-wrap">
+          <div class="progress-bar" id="ex-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="ex-count" id="ex-count">1/5</div>
+    </div>
+
+    <div id="exercise-content"></div>
+  </div>
+
+  <!-- ════════════════ PROFILE ════════════════ -->
+  <div class="view" id="view-profile">
+    <div class="profile-header">
+      <div class="avatar">🧑‍🎓</div>
+      <div class="profile-name" id="p-name">Learner</div>
+      <div class="profile-level" id="p-level">Nivel 1 — Principiante</div>
+    </div>
+
+    <div class="big-stats">
+      <div class="big-stat">
+        <div class="bs-val" id="ps-xp">0</div>
+        <div class="bs-lbl">XP Total</div>
+      </div>
+      <div class="big-stat">
+        <div class="bs-val" id="ps-streak">0</div>
+        <div class="bs-lbl">Días de racha</div>
+      </div>
+      <div class="big-stat">
+        <div class="bs-val" id="ps-words">0</div>
+        <div class="bs-lbl">Palabras aprendidas</div>
+      </div>
+      <div class="big-stat">
+        <div class="bs-val" id="ps-exercises">0</div>
+        <div class="bs-lbl">Ejercicios hechos</div>
+      </div>
+    </div>
+
+    <div class="section-title">Logros</div>
+    <div class="achievements-grid" id="ach-grid"></div>
+
+    <div class="divider"></div>
+
+    <button class="btn btn-secondary" onclick="openSwitchUser()" style="margin-bottom:10px;">
+      👥 Cambiar de usuario
+    </button>
+    <button class="btn btn-secondary" onclick="resetProgress()">
+      🔄 Reiniciar mi progreso
+    </button>
+  </div>
+
+  <!-- ─── Bottom Nav ─── -->
+  <nav id="bottom-nav">
+    <button class="nav-btn active" data-view="home" onclick="goTo('home')">
+      <span class="nav-icon">🏠</span>Inicio
+    </button>
+    <button class="nav-btn" data-view="speak" onclick="goTo('speak')">
+      <span class="nav-icon">🎤</span>Hablar
+    </button>
+    <button class="nav-btn" data-view="vocab" onclick="goTo('vocab')">
+      <span class="nav-icon">🃏</span>Vocab
+    </button>
+    <button class="nav-btn" data-view="lessons" onclick="goTo('lessons')">
+      <span class="nav-icon">📖</span>Lecciones
+    </button>
+    <button class="nav-btn" data-view="profile" onclick="goTo('profile')">
+      <span class="nav-icon">👤</span>Perfil
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- Welcome / Login Modal -->
+<div class="modal-overlay" id="welcome-modal">
+  <div class="modal" style="border-radius:28px;margin:16px;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:52px;margin-bottom:8px;">🎓</div>
+      <h3 style="font-size:24px;">¡Bienvenido a SpeakUp!</h3>
+      <p style="margin-bottom:0;">Aprende inglés con pronunciación real</p>
+    </div>
+    <div id="welcome-new">
+      <div style="font-size:14px;color:var(--txt1);margin-bottom:8px;font-weight:600;">¿Cuál es tu nombre?</div>
+      <input type="text" id="name-input" placeholder="Escribe tu nombre..." maxlength="20"
+        onkeydown="if(event.key==='Enter')createProfile()" />
+      <button class="btn btn-primary" onclick="createProfile()">Comenzar →</button>
+      <div id="existing-users-wrap" style="display:none;margin-top:20px;">
+        <div class="divider"></div>
+        <div style="font-size:13px;color:var(--txt2);margin-bottom:10px;text-align:center;">O elige un perfil existente</div>
+        <div id="existing-users-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+<!-- XP burst -->
+<div class="xp-burst" id="xp-burst"></div>
+
+<!-- Complete Lesson Modal -->
+<div class="modal-overlay hidden" id="lesson-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="modal-title">¡Lección completada! 🎉</h3>
+    <p id="modal-body">Obtuviste 50 XP</p>
+    <button class="btn btn-primary" onclick="closeModal()">Continuar</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════════════════════ */
+const PRONUNCIATION = [
+  { id:1, text:'Think', phonetic:'/θɪŋk/', tip:'Coloca la punta de tu lengua entre los dientes y sopla aire.', category:'th', example:'I think you are right.' },
+  { id:2, text:'The world', phonetic:'/ðə wɜːld/', tip:'El "th" en "the" es suave y sonoro — vibra la lengua.', category:'th', example:'The world is beautiful.' },
+  { id:3, text:'Three', phonetic:'/θriː/', tip:'Combina "th" aspirado + "r" suave inglés.', category:'th', example:'I have three cats.' },
+  { id:4, text:'Breathe', phonetic:'/briːð/', tip:'La "e" final cambia el "th" a sonoro: /ð/.', category:'th', example:'Take a deep breath and breathe slowly.' },
+  { id:5, text:'Very good', phonetic:'/ˈveri ɡʊd/', tip:'La "v" inglesa: muerde suavemente el labio inferior.', category:'vowels', example:'You did a very good job!' },
+  { id:6, text:'Bird', phonetic:'/bɜːrd/', tip:'La vocal /ɜː/ no existe en español — es como "e" con la boca en "o".', category:'r', example:'A bird is singing outside.' },
+  { id:7, text:'Ship / Sheep', phonetic:'/ʃɪp/ / /ʃiːp/', tip:'"Ship" tiene /ɪ/ corta. "Sheep" tiene /iː/ larga. Son palabras distintas!', category:'vowels', example:'A ship sails on the sea. A sheep eats grass.' },
+  { id:8, text:'Beach / Bitch', phonetic:'/biːtʃ/ / /bɪtʃ/', tip:'Cuidado: la /iː/ larga y la /ɪ/ corta cambian el significado!', category:'vowels', example:'We went to the beach today.' },
+  { id:9, text:'World', phonetic:'/wɜːrld/', tip:'La "w" se pronuncia redondeando los labios, no como "gu".', category:'r', example:'Around the world in 80 days.' },
+  { id:10, text:'Really', phonetic:'/ˈriːəli/', tip:'La "r" inglesa: enrosca la lengua hacia atrás sin tocar el paladar.', category:'r', example:'I really love this song.' },
+  { id:11, text:'Comfortable', phonetic:'/ˈkʌmftəbl/', tip:'Se pronuncia con 3 sílabas: CUMF-ta-bol, no com-for-ta-ble.', category:'vowels', example:'This chair is very comfortable.' },
+  { id:12, text:'Pronunciation', phonetic:'/prəˌnʌnsiˈeɪʃn/', tip:'Nota: "pronUnciation" — no "pronounciation"!', category:'vowels', example:'Her pronunciation is excellent.' },
+  { id:13, text:'Through', phonetic:'/θruː/', tip:'"gh" es muda aquí. Solo suena el "th" + "ru" largo.', category:'th', example:'We drove through the tunnel.' },
+  { id:14, text:'How are you?', phonetic:'/haʊ ɑːr juː/', tip:'En habla natural: "hawr-ya?" Las palabras se conectan.', category:'sentences', example:'— Hi! How are you? — Fine, thanks!' },
+  { id:15, text:'I would like coffee', phonetic:"/aɪ wʊd laɪk ˈkɒfi/", tip:'"Would" se reduce a "wud", no se dice la "l". Practica la contracción I\'d like.', category:'sentences', example:"I'd like a coffee, please." },
+  { id:16, text:'Thirty-three', phonetic:'/ˈθɜːrtiˌθriː/', tip:'Dos "th" seguidos. Buen ejercicio para la lengua!', category:'th', example:'There are thirty-three students.' },
+  { id:17, text:'Literature', phonetic:'/ˈlɪtərətʃər/', tip:'Cuatro sílabas: LI-tre-a-cha. La "t" medial suena suave.', category:'vowels', example:'I study English literature.' },
+  { id:18, text:'Entrepreneur', phonetic:'/ˌɒntrəprəˈnɜːr/', tip:'Viene del francés. El acento cae al final: en-tre-pre-NEUR.', category:'sentences', example:'She is a successful entrepreneur.' },
+  { id:19, text:'Vegetables', phonetic:'/ˈvedʒtəblz/', tip:'Solo 3 sílabas reales: VEJ-ta-bls — no ve-ge-ta-bles.', category:'vowels', example:'Eat more fruits and vegetables.' },
+  { id:20, text:'Can you help me?', phonetic:'/kən jə ˈhɛlp miː/', tip:'"Can" se reduce a /kən/ en habla natural. No siempre suena fuerte.', category:'sentences', example:'Excuse me, can you help me find the station?' },
+];
+
+const VOCABULARY = [
+  { id:1, word:'Beautiful', trans:'Hermoso/a', phonetic:'/ˈbjuːtɪfl/', emoji:'🌸', category:'adjectives', example:'She has a beautiful smile.', known:false },
+  { id:2, word:'Brave', trans:'Valiente', phonetic:'/breɪv/', emoji:'🦁', category:'adjectives', example:'He was brave enough to try.', known:false },
+  { id:3, word:'Clever', trans:'Inteligente/Listo', phonetic:'/ˈklɛvər/', emoji:'🦊', category:'adjectives', example:'That was a clever idea!', known:false },
+  { id:4, word:'Grateful', trans:'Agradecido/a', phonetic:'/ˈɡreɪtfl/', emoji:'🙏', category:'adjectives', example:'I am grateful for your help.', known:false },
+  { id:5, word:'Exhausted', trans:'Agotado/a', phonetic:'/ɪɡˈzɔːstɪd/', emoji:'😴', category:'adjectives', example:'I am completely exhausted.', known:false },
+  { id:6, word:'Achieve', trans:'Lograr / Alcanzar', phonetic:'/əˈtʃiːv/', emoji:'🎯', category:'verbs', example:'You can achieve anything you want.', known:false },
+  { id:7, word:'Wander', trans:'Deambular / Vagar', phonetic:'/ˈwɒndər/', emoji:'🧭', category:'verbs', example:'She loves to wander through the city.', known:false },
+  { id:8, word:'Embrace', trans:'Abrazar / Adoptar', phonetic:'/ɪmˈbreɪs/', emoji:'🤗', category:'verbs', example:'Embrace new challenges.', known:false },
+  { id:9, word:'Struggle', trans:'Luchar / Forcejear', phonetic:'/ˈstrʌɡl/', emoji:'⚔️', category:'verbs', example:'He struggled to understand the lesson.', known:false },
+  { id:10, word:'Whisper', trans:'Susurrar', phonetic:'/ˈwɪspər/', emoji:'🤫', category:'verbs', example:'She whispered something in his ear.', known:false },
+  { id:11, word:'Sunrise', trans:'Amanecer', phonetic:'/ˈsʌnraɪz/', emoji:'🌅', category:'nouns', example:'We watched the sunrise together.', known:false },
+  { id:12, word:'Journey', trans:'Viaje / Camino', phonetic:'/ˈdʒɜːrni/', emoji:'🗺️', category:'nouns', example:'Life is a journey, not a destination.', known:false },
+  { id:13, word:'Neighborhood', trans:'Vecindario / Barrio', phonetic:'/ˈneɪbərˌhʊd/', emoji:'🏘️', category:'nouns', example:'I grew up in a friendly neighborhood.', known:false },
+  { id:14, word:'Shadow', trans:'Sombra', phonetic:'/ˈʃædəʊ/', emoji:'👤', category:'nouns', example:'Her shadow moved on the wall.', known:false },
+  { id:15, word:'Wisdom', trans:'Sabiduría', phonetic:'/ˈwɪzdəm/', emoji:'🦉', category:'nouns', example:'With age comes wisdom.', known:false },
+  { id:16, word:'Are you kidding me?', trans:'¿Me estás tomando el pelo?', phonetic:'/ɑːr juː ˈkɪdɪŋ miː/', emoji:'😲', category:'phrases', example:'— I won the lottery! — Are you kidding me?!', known:false },
+  { id:17, word:"It's on the tip of my tongue", trans:'Lo tengo en la punta de la lengua', phonetic:"/ɪts ɒn ðə tɪp əv maɪ tʌŋ/", emoji:'👅', category:'phrases', example:"What's that actor's name? It's on the tip of my tongue!", known:false },
+  { id:18, word:'Break a leg!', trans:'¡Buena suerte!', phonetic:'/breɪk ə lɛɡ/', emoji:'🎭', category:'phrases', example:"You're going on stage tonight? Break a leg!", known:false },
+  { id:19, word:'Once in a blue moon', trans:'Muy de vez en cuando', phonetic:'/wʌns ɪn ə bluː muːn/', emoji:'🌕', category:'phrases', example:'He calls me once in a blue moon.', known:false },
+  { id:20, word:'Spill the beans', trans:'Revelar un secreto', phonetic:'/spɪl ðə biːnz/', emoji:'🫘', category:'phrases', example:"Come on, spill the beans! What happened?", known:false },
+  { id:21, word:'Overwhelmed', trans:'Abrumado/a', phonetic:'/ˌoʊvərˈwɛlmd/', emoji:'🌊', category:'adjectives', example:'I feel overwhelmed with work.', known:false },
+  { id:22, word:'Genuine', trans:'Genuino/a / Auténtico', phonetic:'/ˈdʒɛnjuɪn/', emoji:'💎', category:'adjectives', example:'She gave a genuine smile.', known:false },
+  { id:23, word:'Stumble', trans:'Tropezar / Topar', phonetic:'/ˈstʌmbl/', emoji:'🤕', category:'verbs', example:'He stumbled upon a great idea.', known:false },
+  { id:24, word:'Crave', trans:'Desear / Ansiar', phonetic:'/kreɪv/', emoji:'🤤', category:'verbs', example:'I crave chocolate when I am stressed.', known:false },
+  { id:25, word:'Breakthrough', trans:'Avance / Descubrimiento', phonetic:'/ˈbreɪkθruː/', emoji:'💡', category:'nouns', example:'Scientists made a major breakthrough.', known:false },
+];
+
+const LESSONS = [
+  {
+    id:1, title:'Present Simple', icon:'📅', color:'#7c3aed',
+    desc:'Rutinas, hechos y verdades universales',
+    exercises:[
+      { type:'mc', q:'She ___ to work every day.', opts:['go','goes','going','went'], ans:1, exp:'"She" es 3ª persona singular → agrega -s al verbo.' },
+      { type:'mc', q:'___ you like coffee?', opts:['Do','Does','Is','Are'], ans:0, exp:'Con "you" usamos "Do" para preguntas.' },
+      { type:'mc', q:'He doesn\'t ___ meat.', opts:['eats','eating','eat','ate'], ans:2, exp:'Con "doesn\'t" el verbo va en base (sin -s).' },
+      { type:'fill', q:'Water ___ at 100°C. (boil)', ans:'boils', exp:'"Water" es 3ª persona → boils.' },
+      { type:'mc', q:'I ___ from Mexico.', opts:['am','is','are','be'], ans:0, exp:'Con "I" usamos "am" del verbo to be.' },
+    ]
+  },
+  {
+    id:2, title:'Past Simple', icon:'⏪', color:'#0891b2',
+    desc:'Habla de eventos que ya ocurrieron',
+    exercises:[
+      { type:'mc', q:'Yesterday she ___ a book.', opts:['reads','read','reading','readed'], ans:1, exp:'"Read" es irregular. Pasado: read (pronunciado /rɛd/).' },
+      { type:'mc', q:'We ___ to the party last night.', opts:['go','gone','went','goed'], ans:2, exp:'"Go" es irregular. Pasado: went.' },
+      { type:'fill', q:'He ___ the window by accident. (break)', ans:'broke', exp:'"Break" es irregular → broke.' },
+      { type:'mc', q:'Did you ___ the news?', opts:['heard','hear','hearing','hears'], ans:1, exp:'Con "Did" el verbo va en base.' },
+      { type:'mc', q:'I ___ tired after the run.', opts:['was','were','am','be'], ans:0, exp:'"I" + was (to be en pasado).' },
+    ]
+  },
+  {
+    id:3, title:'Artículos: A, An, The', icon:'📝', color:'#059669',
+    desc:'Aprende cuándo usar a, an y the',
+    exercises:[
+      { type:'mc', q:'I saw ___ elephant at the zoo.', opts:['a','an','the','—'], ans:1, exp:'"An" antes de sonidos vocálicos. "Elephant" empieza con /ɛ/.' },
+      { type:'mc', q:'___ sun rises in the east.', opts:['A','An','The','—'], ans:2, exp:'"The" para cosas únicas en el mundo.' },
+      { type:'mc', q:'She is ___ doctor.', opts:['a','an','the','—'], ans:0, exp:'"A" antes de consonantes. "Doctor" empieza con /d/.' },
+      { type:'fill', q:'Can you open ___ door, please?', ans:'the', exp:'"The" porque ambos sabemos cuál puerta.' },
+      { type:'mc', q:'He wants to be ___ engineer.', opts:['a','an','the','—'], ans:1, exp:'"An" porque "engineer" empieza con sonido vocálico /ɛ/.' },
+    ]
+  },
+  {
+    id:4, title:'Preguntas WH', icon:'❓', color:'#d97706',
+    desc:'Forma preguntas con who, what, where, when, why, how',
+    exercises:[
+      { type:'mc', q:'___ do you live?', opts:['What','Who','Where','When'], ans:2, exp:'"Where" pregunta por lugar.' },
+      { type:'mc', q:'___ is your birthday?', opts:['Where','When','Why','How'], ans:1, exp:'"When" pregunta por tiempo.' },
+      { type:'mc', q:'___ did you do that?', opts:['What','Why','Who','Which'], ans:1, exp:'"Why" pregunta por razón.' },
+      { type:'fill', q:'___ old are you?', ans:'How', exp:'"How + adjective" para preguntar por características.' },
+      { type:'mc', q:'___ is calling?', opts:['What','When','Who','Where'], ans:2, exp:'"Who" pregunta por personas.' },
+    ]
+  },
+  {
+    id:5, title:'Verbos Modales', icon:'🔧', color:'#be185d',
+    desc:'Can, could, should, must, would',
+    exercises:[
+      { type:'mc', q:'You look sick. You ___ see a doctor.', opts:['can','must','should','would'], ans:2, exp:'"Should" expresa consejo.' },
+      { type:'mc', q:'I ___ speak three languages.', opts:['should','must','can','would'], ans:2, exp:'"Can" expresa habilidad.' },
+      { type:'mc', q:'You ___ wear a seatbelt. It\'s the law.', opts:['should','can','must','could'], ans:2, exp:'"Must" expresa obligación.' },
+      { type:'mc', q:'___ you help me, please?', opts:['Must','Should','Would','Can'], ans:2, exp:'"Would" para peticiones educadas.' },
+      { type:'fill', q:'She ___ speak English when she was five. (ability in past)', ans:'could', exp:'"Could" es el pasado de "can" para habilidad.' },
+    ]
+  },
+  {
+    id:6, title:'Escucha y Responde', icon:'👂', color:'#7c3aed',
+    desc:'Practica tu comprensión auditiva',
+    exercises:[
+      { type:'listen', text:'The weather today is sunny and warm.', q:'What is the weather like?', opts:['Cold and rainy','Sunny and warm','Cloudy and windy','Hot and humid'], ans:1 },
+      { type:'listen', text:'My name is Sarah. I am twenty-five years old and I work as a teacher.', q:'What does Sarah do for a living?', opts:['She is a doctor','She is a student','She is a teacher','She is a nurse'], ans:2 },
+      { type:'listen', text:'The train departs at eight fifteen in the morning from platform three.', q:'When does the train depart?', opts:['8:50','8:15','8:30','8:45'], ans:1 },
+      { type:'listen', text:'I usually have breakfast at seven, then I go for a run before starting work.', q:'What does the person do before work?', opts:['Take a shower','Have coffee','Go for a run','Read the news'], ans:2 },
+      { type:'listen', text:'Could you please turn down the music? I have an important meeting in ten minutes.', q:'Why does the person want the music turned down?', opts:['They are sleeping','They have a meeting','They are studying','They have a headache'], ans:1 },
+    ]
+  },
+];
+
+const ACHIEVEMENTS = [
+  { id:'first_word', icon:'🌟', name:'Primera palabra', desc:'Aprende tu primera palabra', earned:false },
+  { id:'streak3', icon:'🔥', name:'En racha', desc:'3 días seguidos', earned:false },
+  { id:'words10', icon:'📚', name:'Lector', desc:'10 palabras aprendidas', earned:false },
+  { id:'ex10', icon:'💪', name:'Constante', desc:'10 ejercicios', earned:false },
+  { id:'lesson1', icon:'🎓', name:'Estudiante', desc:'Primera lección', earned:false },
+  { id:'speak5', icon:'🎤', name:'Hablador', desc:'5 palabras pronunciadas', earned:false },
+  { id:'perfect', icon:'💯', name:'Perfecto', desc:'100% en pronunciación', earned:false },
+  { id:'words25', icon:'🏆', name:'Experto', desc:'25 palabras aprendidas', earned:false },
+];
+
+const LEVEL_NAMES = ['Principiante','Básico','Elemental','Pre-intermedio','Intermedio','Avanzado','Experto','Maestro'];
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════════ */
+let currentUser = null;
+let state = {};
+
+function defaultState(name){
+  return {
+    name: name || 'Learner',
+    xp: 0, level: 1,
+    streak: 0, lastDate: null,
+    wordsKnown: [],
+    exercisesDone: 0,
+    speakDone: [],
+    dailyProgress: 0, dailyDate: null,
+    totalCorrect: 0, totalAnswered: 0,
+    achievements: [],
+    lessonProgress: {},
+    speakFilter: 'all',
+    vocabCat: 'all',
+    vocabIndex: 0,
+    currentLesson: null,
+    currentExIdx: 0,
+    sessionScore: { correct: 0, total: 0 },
+  };
+}
+
+function stateKey(name){ return 'speakup_state_' + name.toLowerCase().trim(); }
+
+function loadState(name){
+  try {
+    const s = JSON.parse(localStorage.getItem(stateKey(name)));
+    return s ? Object.assign(defaultState(name), s) : defaultState(name);
+  } catch { return defaultState(name); }
+}
+
+function saveState(){
+  if(!currentUser) return;
+  localStorage.setItem(stateKey(currentUser), JSON.stringify(state));
+}
+
+function getAllUsers(){
+  const users = [];
+  for(let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i);
+    if(key && key.startsWith('speakup_state_')){
+      try {
+        const s = JSON.parse(localStorage.getItem(key));
+        if(s && s.name) users.push(s);
+      } catch {}
+    }
+  }
+  return users;
+}
+
+function createProfile(){
+  const input = document.getElementById('name-input');
+  const name = input ? input.value.trim() : '';
+  if(!name){ input.style.borderColor = 'var(--red)'; input.placeholder = 'Escribe tu nombre primero'; return; }
+  loginUser(name);
+}
+
+function loginUser(name){
+  currentUser = name;
+  localStorage.setItem('speakup_current_user', name);
+  state = loadState(name);
+  document.getElementById('welcome-modal').classList.add('hidden');
+  updateStreak();
+  saveState();
+  updateUI();
+  renderHome();
+  goTo('home');
+}
+
+function openSwitchUser(){
+  document.getElementById('welcome-modal').classList.remove('hidden');
+  document.getElementById('name-input').value = '';
+  renderExistingUsers();
+}
+
+function renderExistingUsers(){
+  const users = getAllUsers();
+  const wrap = document.getElementById('existing-users-wrap');
+  const list = document.getElementById('existing-users-list');
+  if(!users.length){ wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = users.map(u => `
+    <div onclick="loginUser('${u.name}')" style="
+      display:flex;align-items:center;gap:12px;padding:12px;
+      background:var(--bg3);border-radius:var(--r-sm);margin-bottom:8px;
+      cursor:pointer;border:1px solid var(--border);transition:border-color .2s;"
+      onmouseover="this.style.borderColor='var(--p1)'"
+      onmouseout="this.style.borderColor='var(--border)'">
+      <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+        ${u.name[0].toUpperCase()}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:14px;">${u.name}</div>
+        <div style="font-size:12px;color:var(--txt2);">Nivel ${u.level} · ${u.xp} XP · ${(u.wordsKnown||[]).length} palabras</div>
+      </div>
+      <div style="color:var(--p3);font-size:18px;">›</div>
+    </div>
+  `).join('');
+}
+
+function resetProgress(){
+  if(!confirm('¿Seguro que deseas reiniciar todo tu progreso?')) return;
+  state = defaultState(currentUser);
+  saveState();
+  updateUI();
+  renderProfile();
+  showToast('Progreso reiniciado ✓');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════════════════ */
+let currentView = 'home';
+
+function goTo(view){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + view);
+  if(el){ el.classList.add('active'); currentView = view; }
+
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+
+  // Show/hide nav
+  const noNav = ['exercise'];
+  document.getElementById('bottom-nav').style.display = noNav.includes(view) ? 'none' : 'flex';
+  document.getElementById('topbar').style.display = noNav.includes(view) ? 'none' : 'flex';
+
+  if(view === 'home') renderHome();
+  if(view === 'speak') renderSpeak();
+  if(view === 'vocab') renderVocab();
+  if(view === 'lessons') renderLessons();
+  if(view === 'profile') renderProfile();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GAMIFICATION
+════════════════════════════════════════════════════════════ */
+function addXP(amount){
+  state.xp += amount;
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  if(newLevel > state.level){
+    state.level = newLevel;
+    showToast(`🎉 ¡Subiste al Nivel ${state.level}!`);
+  }
+  state.exercisesDone++;
+  state.dailyProgress = (state.dailyProgress || 0) + 1;
+  updateStreak();
+  checkAchievements();
+  saveState();
+  updateUI();
+  showXPBurst('+' + amount + ' XP');
+}
+
+function updateStreak(){
+  const today = new Date().toDateString();
+  if(state.lastDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if(state.lastDate === yesterday){
+    state.streak++;
+  } else if(state.lastDate !== today){
+    state.streak = 1;
+  }
+  state.lastDate = today;
+}
+
+function checkAchievements(){
+  const unlock = (id) => {
+    if(!state.achievements.includes(id)){
+      state.achievements.push(id);
+      const ach = ACHIEVEMENTS.find(a => a.id === id);
+      if(ach) setTimeout(() => showToast('🏆 Logro desbloqueado: ' + ach.name), 800);
+    }
+  };
+  if(state.wordsKnown.length >= 1) unlock('first_word');
+  if(state.streak >= 3) unlock('streak3');
+  if(state.wordsKnown.length >= 10) unlock('words10');
+  if(state.wordsKnown.length >= 25) unlock('words25');
+  if(state.exercisesDone >= 10) unlock('ex10');
+  if(state.lessonProgress && Object.keys(state.lessonProgress).length >= 1) unlock('lesson1');
+  if(state.speakDone && state.speakDone.length >= 5) unlock('speak5');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UI UPDATES
+════════════════════════════════════════════════════════════ */
+function updateUI(){
+  // Top bar
+  el('tb-streak').textContent = state.streak;
+  el('tb-xp').textContent = state.xp;
+
+  // XP bar
+  const lvlXP = (state.level - 1) * 100;
+  const pct = Math.min(100, ((state.xp - lvlXP) / 100) * 100);
+  el('xp-bar').style.width = pct + '%';
+  el('xp-current').textContent = state.xp;
+  el('xp-next').textContent = state.level * 100;
+  el('level-badge').textContent = 'Nivel ' + state.level;
+
+  // Daily
+  const dp = Math.min(5, state.dailyProgress || 0);
+  el('daily-bar').style.width = (dp/5*100) + '%';
+  el('daily-badge').textContent = dp + '/5';
+
+  // Stats
+  el('stat-streak').textContent = state.streak;
+  el('stat-words').textContent = (state.wordsKnown||[]).length;
+  const acc = state.totalAnswered > 0 ? Math.round(state.totalCorrect/state.totalAnswered*100) : 0;
+  el('stat-accuracy').textContent = acc + '%';
+}
+
+function renderHome(){
+  updateUI();
+  el('home-name').textContent = state.name || currentUser || 'Learner';
+
+  // Streak calendar (last 7 days)
+  const cal = el('streak-cal');
+  cal.innerHTML = '';
+  const days = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+  const today = new Date();
+  for(let i = 6; i >= 0; i--){
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const isToday = i === 0;
+    const done = state.streak > i;
+    const div = document.createElement('div');
+    div.className = 'streak-day' + (done ? ' done' : '') + (isToday ? ' today' : '');
+    div.textContent = days[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    cal.appendChild(div);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SPEAK LAB
+════════════════════════════════════════════════════════════ */
+let speakIndex = 0;
+let speakList = [...PRONUNCIATION];
+let isRecording = false;
+let recognition = null;
+
+function getSpeakList(){
+  if(state.speakFilter === 'all') return PRONUNCIATION;
+  return PRONUNCIATION.filter(p => p.category === state.speakFilter);
+}
+
+function renderSpeak(){
+  speakList = getSpeakList();
+  speakIndex = Math.min(speakIndex, speakList.length - 1);
+  el('speak-total').textContent = speakList.length;
+  showSpeakWord();
+}
+
+function showSpeakWord(){
+  if(!speakList.length) return;
+  const item = speakList[speakIndex];
+  el('speak-word').textContent = item.text;
+  el('speak-phonetic').textContent = item.phonetic;
+  el('speak-category').textContent = categoryLabel(item.category);
+  el('speak-example').textContent = '📌 ' + item.example;
+  el('tip-text').textContent = item.tip;
+  el('score-section').style.display = 'none';
+  el('record-status').textContent = 'Toca 🎤 para grabar tu pronunciación';
+
+  const done = (state.speakDone || []).length;
+  el('speak-progress-lbl').textContent = done;
+  el('speak-bar').style.width = (speakList.length ? (done/speakList.length)*100 : 0) + '%';
+}
+
+function setSpeakFilter(f, btn){
+  state.speakFilter = f;
+  document.querySelectorAll('.speak-filters .filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderSpeak();
+}
+
+function prevWord(){
+  speakIndex = (speakIndex - 1 + speakList.length) % speakList.length;
+  showSpeakWord();
+}
+
+function nextWord(){
+  speakIndex = (speakIndex + 1) % speakList.length;
+  showSpeakWord();
+}
+
+function speakWord(){
+  const item = speakList[speakIndex];
+  if(!item) return;
+  const utter = new SpeechSynthesisUtterance(item.text);
+  utter.lang = 'en-US'; utter.rate = 0.8;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+}
+
+function toggleRecording(){
+  if(isRecording){ stopRecording(); return; }
+  startRecording();
+}
+
+function startRecording(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    showToast('Tu navegador no soporta reconocimiento de voz. Usa Chrome.', true);
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 3;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    el('record-btn').classList.add('recording');
+    el('record-btn').textContent = '⏹';
+    el('record-status').innerHTML = '<span class="dots"><span></span><span></span><span></span></span> Escuchando...';
+  };
+
+  recognition.onresult = (e) => {
+    const results = Array.from(e.results[0]).map(r => r.transcript.trim().toLowerCase());
+    const target = speakList[speakIndex].text.toLowerCase().trim();
+    evaluatePronunciation(target, results[0], results);
+  };
+
+  recognition.onerror = (e) => {
+    stopRecording();
+    if(e.error === 'no-speech') showToast('No te escuché. ¡Habla más fuerte!', true);
+    else if(e.error === 'not-allowed') showToast('Necesito acceso al micrófono', true);
+    else showToast('Error: ' + e.error, true);
+  };
+
+  recognition.onend = () => { isRecording = false; resetRecordBtn(); };
+  recognition.start();
+}
+
+function stopRecording(){
+  if(recognition){ try{ recognition.stop(); }catch(e){} }
+  isRecording = false;
+  resetRecordBtn();
+}
+
+function resetRecordBtn(){
+  el('record-btn').classList.remove('recording');
+  el('record-btn').textContent = '🎤';
+  if(el('record-status').querySelector('.dots')){
+    el('record-status').textContent = 'Toca 🎤 para grabar tu pronunciación';
+  }
+}
+
+function evaluatePronunciation(target, heard, alternatives){
+  const score = calcSimilarity(target, heard, alternatives);
+  el('heard-word').textContent = heard || '(silencio)';
+  el('score-section').style.display = 'block';
+
+  const ring = el('score-ring');
+  ring.textContent = score + '%';
+  ring.className = 'score-ring ' + (score >= 80 ? 'good' : score >= 55 ? 'ok' : 'bad');
+
+  if(score >= 80){
+    el('score-msg').textContent = '¡Excelente pronunciación! 🎉';
+    el('score-sub').textContent = 'Suenas como un nativo';
+    // Mark as done
+    if(!state.speakDone) state.speakDone = [];
+    const id = speakList[speakIndex].id;
+    if(!state.speakDone.includes(id)) state.speakDone.push(id);
+    addXP(15);
+  } else if(score >= 55){
+    el('score-msg').textContent = '¡Buen intento! Sigue practicando 💪';
+    el('score-sub').textContent = 'Estás mejorando';
+    addXP(5);
+  } else {
+    el('score-msg').textContent = 'Necesitas más práctica 🎯';
+    el('score-sub').textContent = 'Escucha el audio y repite';
+  }
+
+  el('record-status').textContent = score >= 80 ? '¡Bien hecho!' : 'Inténtalo de nuevo';
+}
+
+function calcSimilarity(target, heard, alternatives){
+  if(!heard) return 0;
+  // Try best match among alternatives
+  let best = 0;
+  const allHeard = alternatives || [heard];
+  for(const h of allHeard){
+    const s = stringSimilarity(target, h.toLowerCase());
+    if(s > best) best = s;
+  }
+  // Bonus if target words appear in heard
+  const targetWords = target.split(' ');
+  const heardWords = (allHeard[0] || '').toLowerCase().split(' ');
+  let wordMatches = 0;
+  for(const tw of targetWords){
+    if(heardWords.some(hw => stringSimilarity(tw, hw) > 0.7)) wordMatches++;
+  }
+  const wordScore = targetWords.length ? (wordMatches / targetWords.length) : 0;
+  return Math.round(Math.max(best, wordScore) * 100);
+}
+
+function stringSimilarity(a, b){
+  if(a === b) return 1;
+  if(!a || !b) return 0;
+  const longer = a.length > b.length ? a : b;
+  const shorter = a.length > b.length ? b : a;
+  const lLen = longer.length;
+  if(lLen === 0) return 1;
+  return (lLen - editDistance(longer, shorter)) / lLen;
+}
+
+function editDistance(a, b){
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, (_,i) => Array.from({length: n+1}, (_,j) => i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function categoryLabel(cat){
+  return {th:'Sonido TH',vowels:'Vocales',r:'Sonido R',sentences:'Frases'}[cat] || cat;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VOCABULARY
+════════════════════════════════════════════════════════════ */
+let vocabList = [...VOCABULARY];
+let vocabIdx = 0;
+let cardFlipped = false;
+
+function getVocabList(){
+  if(state.vocabCat === 'all') return VOCABULARY;
+  return VOCABULARY.filter(v => v.category === state.vocabCat);
+}
+
+function renderVocab(){
+  vocabList = getVocabList();
+  vocabIdx = state.vocabIndex % Math.max(1, vocabList.length);
+  cardFlipped = false;
+  el('flashcard').classList.remove('flipped');
+  showVocabCard();
+}
+
+function setVocabCat(cat, btn){
+  state.vocabCat = cat;
+  vocabIdx = 0;
+  document.querySelectorAll('.vocab-cats .filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderVocab();
+}
+
+function showVocabCard(){
+  if(!vocabList.length) return;
+  const item = vocabList[vocabIdx];
+  el('fc-emoji').textContent = item.emoji;
+  el('fc-word').textContent = item.word;
+  el('fc-phonetic').textContent = item.phonetic;
+  el('fc-translation').textContent = item.trans;
+  el('fc-example').textContent = '"' + item.example + '"';
+  el('fc-cat').textContent = item.category;
+  el('vocab-count-lbl').textContent = (vocabIdx+1) + ' / ' + vocabList.length;
+  el('vocab-bar').style.width = ((vocabIdx+1)/vocabList.length*100) + '%';
+}
+
+function flipCard(){
+  cardFlipped = !cardFlipped;
+  el('flashcard').classList.toggle('flipped', cardFlipped);
+}
+
+function rateVocab(rating){
+  if(!cardFlipped){ flipCard(); return; }
+  const item = vocabList[vocabIdx];
+  if(rating === 1 && !state.wordsKnown.includes(item.id)){
+    state.wordsKnown.push(item.id);
+    addXP(10);
+    showToast('✓ Palabra aprendida!');
+  } else if(rating === 0){
+    showToast('📌 Repasarás esta palabra');
+    addXP(2);
+  }
+  checkAchievements();
+  nextVocab();
+}
+
+function nextVocab(){
+  cardFlipped = false;
+  el('flashcard').classList.remove('flipped');
+  vocabIdx = (vocabIdx + 1) % vocabList.length;
+  state.vocabIndex = vocabIdx;
+  saveState();
+  showVocabCard();
+}
+
+function speakVocabWord(){
+  const item = vocabList[vocabIdx];
+  if(!item) return;
+  const u = new SpeechSynthesisUtterance(item.word);
+  u.lang = 'en-US'; u.rate = 0.85;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LESSONS
+════════════════════════════════════════════════════════════ */
+function renderLessons(){
+  const list = el('lessons-list');
+  list.innerHTML = '';
+  LESSONS.forEach(lesson => {
+    const prog = state.lessonProgress[lesson.id] || 0;
+    const pct = Math.round(prog / lesson.exercises.length * 100);
+    const stars = prog >= lesson.exercises.length ? '⭐⭐⭐' : prog > 0 ? '⭐⭐' : '⭐';
+    const div = document.createElement('div');
+    div.className = 'lesson-card';
+    div.onclick = () => startLesson(lesson.id);
+    div.innerHTML = `
+      <div class="lesson-icon" style="background:${lesson.color}22;color:${lesson.color};">${lesson.icon}</div>
+      <div class="lesson-info">
+        <div class="lesson-title">${lesson.title}</div>
+        <div class="lesson-desc">${lesson.desc}</div>
+        <div class="lesson-meta">
+          <span class="lesson-stars">${stars}</span>
+          <span class="lesson-count">${lesson.exercises.length} ejercicios</span>
+          ${prog > 0 ? `<span class="badge badge-green">${pct}%</span>` : ''}
+        </div>
+        ${prog > 0 ? `<div class="progress-wrap" style="margin-top:6px;height:4px;"><div class="progress-bar" style="width:${pct}%;background:${lesson.color}"></div></div>` : ''}
+      </div>
+      <div class="lesson-arrow">›</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function startLesson(id){
+  const lesson = LESSONS.find(l => l.id === id);
+  if(!lesson) return;
+  state.currentLesson = id;
+  state.currentExIdx = 0;
+  state.sessionScore = { correct:0, total:0 };
+  goTo('exercise');
+  renderExercise();
+}
+
+function renderExercise(){
+  const lesson = LESSONS.find(l => l.id === state.currentLesson);
+  if(!lesson) return;
+  const idx = state.currentExIdx;
+  const total = lesson.exercises.length;
+  const ex = lesson.exercises[idx];
+
+  el('ex-bar').style.width = (idx/total*100) + '%';
+  el('ex-count').textContent = (idx+1) + '/' + total;
+
+  const cont = el('exercise-content');
+
+  if(ex.type === 'mc' || ex.type === 'fill'){
+    cont.innerHTML = `
+      <div class="question-card">
+        <div class="question-type">${ex.type === 'mc' ? 'Opción múltiple' : 'Completar el espacio'}</div>
+        <div class="question-text">${formatQuestion(ex.q)}</div>
+      </div>
+      ${ex.type === 'mc'
+        ? `<div class="options-grid">${ex.opts.map((o,i)=>`<button class="option-btn" onclick="selectOption(${i})">${o}</button>`).join('')}</div>`
+        : `<input type="text" id="fill-input" placeholder="Escribe tu respuesta..." onkeydown="if(event.key==='Enter')checkFill()" />
+           <button class="btn btn-primary" onclick="checkFill()">Comprobar</button>`
+      }
+      <div id="feedback" style="display:none;"></div>
+      <div id="next-btn-wrap" style="display:none;margin-top:10px;">
+        <button class="btn btn-primary" onclick="nextExercise()">Siguiente →</button>
+      </div>
+    `;
+  } else if(ex.type === 'listen'){
+    cont.innerHTML = `
+      <div class="question-card">
+        <div class="question-type">Comprensión auditiva</div>
+        <div style="text-align:center;margin-bottom:16px;">
+          <button class="btn btn-secondary" style="width:auto;" onclick="playListenAudio()">🔊 Reproducir audio</button>
+        </div>
+        <div class="question-text">${ex.q}</div>
+      </div>
+      <div class="options-grid">${ex.opts.map((o,i)=>`<button class="option-btn" onclick="selectOption(${i})">${o}</button>`).join('')}</div>
+      <div id="feedback" style="display:none;"></div>
+      <div id="next-btn-wrap" style="display:none;margin-top:10px;">
+        <button class="btn btn-primary" onclick="nextExercise()">Siguiente →</button>
+      </div>
+    `;
+  }
+}
+
+function playListenAudio(){
+  const lesson = LESSONS.find(l => l.id === state.currentLesson);
+  if(!lesson) return;
+  const ex = lesson.exercises[state.currentExIdx];
+  if(!ex || !ex.text) return;
+  const u = new SpeechSynthesisUtterance(ex.text);
+  u.lang = 'en-US'; u.rate = 0.85;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+function formatQuestion(q){
+  return q.replace('___', '<span class="question-blank">___</span>');
+}
+
+function selectOption(idx){
+  const lesson = LESSONS.find(l => l.id === state.currentLesson);
+  const ex = lesson.exercises[state.currentExIdx];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[idx].classList.add(idx === ex.ans ? 'correct' : 'wrong');
+  if(idx !== ex.ans) btns[ex.ans].classList.add('correct');
+
+  const correct = idx === ex.ans;
+  showFeedback(correct, ex.exp || (correct ? '¡Correcto!' : 'La respuesta correcta está resaltada en verde.'));
+  recordAnswer(correct);
+}
+
+function checkFill(){
+  const inp = el('fill-input');
+  if(!inp) return;
+  const lesson = LESSONS.find(l => l.id === state.currentLesson);
+  const ex = lesson.exercises[state.currentExIdx];
+  const userAns = inp.value.trim().toLowerCase();
+  const correct = userAns === ex.ans.toLowerCase() || stringSimilarity(userAns, ex.ans.toLowerCase()) > 0.85;
+  inp.disabled = true;
+  inp.style.borderColor = correct ? 'var(--green)' : 'var(--red)';
+  if(!correct) inp.value += '  →  ' + ex.ans;
+  showFeedback(correct, ex.exp);
+  recordAnswer(correct);
+}
+
+function recordAnswer(correct){
+  state.totalAnswered++;
+  if(correct) state.totalCorrect++;
+  state.sessionScore.total++;
+  if(correct) state.sessionScore.correct++;
+  el('next-btn-wrap').style.display = 'block';
+}
+
+function showFeedback(correct, exp){
+  const fb = el('feedback');
+  fb.style.display = 'flex';
+  fb.className = 'feedback-bar ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = `<span class="fb-icon">${correct ? '✅' : '❌'}</span><div><strong>${correct ? '¡Correcto!' : 'Incorrecto'}</strong><br/><span style="font-weight:400;font-size:13px;">${exp||''}</span></div>`;
+  if(correct) addXP(10);
+}
+
+function nextExercise(){
+  const lesson = LESSONS.find(l => l.id === state.currentLesson);
+  state.currentExIdx++;
+
+  if(state.currentExIdx >= lesson.exercises.length){
+    // Lesson complete
+    if(!state.lessonProgress) state.lessonProgress = {};
+    state.lessonProgress[lesson.id] = lesson.exercises.length;
+    saveState();
+    checkAchievements();
+    showLessonComplete(lesson);
+  } else {
+    renderExercise();
+  }
+}
+
+function showLessonComplete(lesson){
+  const sc = state.sessionScore;
+  const pct = sc.total > 0 ? Math.round(sc.correct/sc.total*100) : 0;
+  el('modal-title').textContent = '¡Lección completada! 🎉';
+  el('modal-body').innerHTML = `
+    <strong>${lesson.title}</strong><br/>
+    Precisión: <strong>${pct}%</strong> (${sc.correct}/${sc.total})<br/>
+    XP ganado: <strong>+${sc.correct * 10} XP</strong>
+  `;
+  el('lesson-modal').classList.remove('hidden');
+}
+
+function closeModal(){
+  el('lesson-modal').classList.add('hidden');
+  goTo('lessons');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROFILE
+════════════════════════════════════════════════════════════ */
+function renderProfile(){
+  el('p-name').textContent = state.name || currentUser || 'Learner';
+  const lvlName = LEVEL_NAMES[Math.min(state.level-1, LEVEL_NAMES.length-1)];
+  el('p-level').textContent = `Nivel ${state.level} — ${lvlName}`;
+  el('ps-xp').textContent = state.xp;
+  el('ps-streak').textContent = state.streak;
+  el('ps-words').textContent = (state.wordsKnown||[]).length;
+  el('ps-exercises').textContent = state.exercisesDone;
+
+  const grid = el('ach-grid');
+  grid.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const earned = (state.achievements||[]).includes(a.id);
+    const div = document.createElement('div');
+    div.className = 'achievement' + (earned ? '' : ' locked');
+    div.title = a.desc;
+    div.innerHTML = `<div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST / XP BURST
+════════════════════════════════════════════════════════════ */
+let toastTimer = null;
+function showToast(msg, error=false){
+  const t = el('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (error ? ' error' : '');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+function showXPBurst(msg){
+  const b = el('xp-burst');
+  b.textContent = msg;
+  b.className = 'xp-burst';
+  void b.offsetWidth;
+  b.className = 'xp-burst show';
+  setTimeout(() => b.className = 'xp-burst', 600);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════════════ */
+function el(id){ return document.getElementById(id); }
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('speakup_current_user');
+  if(saved){
+    currentUser = saved;
+    state = loadState(saved);
+    document.getElementById('welcome-modal').classList.add('hidden');
+    updateStreak();
+    saveState();
+    updateUI();
+    renderHome();
+    renderLessons();
+    renderSpeak();
+    renderVocab();
+    goTo('home');
+  } else {
+    // Show welcome screen, render existing users if any
+    renderExistingUsers();
+    setTimeout(() => document.getElementById('name-input').focus(), 300);
+  }
+});
+</script>
+</body>
+</html>
