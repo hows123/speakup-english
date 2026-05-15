@@ -577,6 +577,21 @@
       <div style="font-size:12px;color:var(--txt2);">Completa 5 ejercicios para mantener tu racha 🔥</div>
     </div>
 
+    <!-- Daily Challenge -->
+    <div id="daily-challenge-card" class="card" style="margin-bottom:20px;cursor:pointer;border-color:var(--border);transition:border-color .2s;" onclick="startDailyChallenge()" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:36px;">⚡</div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:800;">Desafío del día</div>
+          <div style="font-size:12px;color:var(--txt2);margin-top:2px;" id="challenge-sub">5 preguntas · Gana 75 XP extra</div>
+        </div>
+        <div id="challenge-status" style="font-size:22px;">›</div>
+      </div>
+      <div class="progress-wrap" style="margin-top:12px;height:6px;">
+        <div class="progress-bar" id="challenge-bar" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--orange));"></div>
+      </div>
+    </div>
+
     <!-- Quick actions -->
     <div class="section-title">Practicar ahora</div>
     <div class="quick-actions">
@@ -986,6 +1001,76 @@ const LESSONS = [
       { type:'listen', text:'Could you please turn down the music? I have an important meeting in ten minutes.', q:'Why does the person want the music turned down?', opts:['They are sleeping','They have a meeting','They are studying','They have a headache'], ans:1 },
     ]
   },
+
+  // ── NIVEL 2 (se desbloquean al completar lecciones 1-3) ──
+  {
+    id:7, title:'Present Continuous', icon:'⏳', color:'#0891b2',
+    desc:'Acciones que ocurren ahora mismo', unlockAfter:1,
+    exercises:[
+      { type:'mc', q:'She ___ a book right now.', opts:['read','reads','is reading','was reading'], ans:2, exp:'"Is reading" = presente continuo: to be + verbo-ing.' },
+      { type:'mc', q:'They ___ football at the moment.', opts:['play','are playing','played','plays'], ans:1, exp:'"At the moment" indica presente continuo.' },
+      { type:'fill', q:'I ___ (study) for my exam right now.', ans:'am studying', exp:'I + am + verbo-ing.' },
+      { type:'mc', q:'___ you listening to me?', opts:['Do','Are','Is','Have'], ans:1, exp:'Preguntas en presente continuo: Are/Is/Am + sujeto + -ing.' },
+      { type:'mc', q:'He isn\'t ___ right now.', opts:['sleep','sleeps','slept','sleeping'], ans:3, exp:'Con isn\'t el verbo va en -ing.' },
+    ]
+  },
+  {
+    id:8, title:'Future: Will & Going to', icon:'🔮', color:'#be185d',
+    desc:'Habla sobre el futuro con confianza', unlockAfter:2,
+    exercises:[
+      { type:'mc', q:'I think it ___ rain tomorrow.', opts:['going to','will','is','was'], ans:1, exp:'"Will" para predicciones espontáneas o sin evidencia.' },
+      { type:'mc', q:'Look at those clouds! It ___ rain.', opts:['will','is going to','goes to','would'], ans:1, exp:'"Going to" cuando hay evidencia visible.' },
+      { type:'fill', q:'We ___ visit Paris next summer. (going to)', ans:'are going to', exp:'Subject + are/am/is + going to + verb.' },
+      { type:'mc', q:'___ you help me with this?', opts:['Are going to','Going to','Will','Would'], ans:2, exp:'"Will" para ofrecimientos y decisiones en el momento.' },
+      { type:'mc', q:'She ___ be 30 next year.', opts:['is going to','going to','will','would'], ans:2, exp:'"Will" para hechos futuros inevitables.' },
+    ]
+  },
+  {
+    id:9, title:'Comparativos y Superlativos', icon:'📊', color:'#059669',
+    desc:'Compara personas, objetos y lugares', unlockAfter:3,
+    exercises:[
+      { type:'mc', q:'This car is ___ than that one.', opts:['fast','more fast','faster','fastest'], ans:2, exp:'Adjetivos cortos (1 sílaba): agrega -er.' },
+      { type:'mc', q:'She is the ___ student in the class.', opts:['more intelligent','intelligenter','most intelligent','intelligest'], ans:2, exp:'Superlativo de adjetivos largos: the most + adjetivo.' },
+      { type:'fill', q:'Today is ___ than yesterday. (hot)', ans:'hotter', exp:'Adjetivos que terminan en consonante-vocal-consonante doblan la consonante: hot → hotter.' },
+      { type:'mc', q:'This is ___ movie I have ever seen.', opts:['the most bad','the worse','the worst','most worst'], ans:2, exp:'"Bad" es irregular: bad → worse → the worst.' },
+      { type:'mc', q:'He runs ___ than his brother.', opts:['more fast','faster','more faster','fastest'], ans:1, exp:'"Fast" es adjetivo corto → faster.' },
+    ]
+  },
+
+  // ── NIVEL 3 (se desbloquean al completar lecciones 4-6) ──
+  {
+    id:10, title:'Condicionales', icon:'🔀', color:'#d97706',
+    desc:'If clauses: 0, 1er y 2do condicional', unlockAfter:4,
+    exercises:[
+      { type:'mc', q:'If you heat water to 100°C, it ___.', opts:['boil','boils','will boil','would boil'], ans:1, exp:'Condicional 0 (verdad universal): if + present, present.' },
+      { type:'mc', q:'If it rains tomorrow, I ___ stay home.', opts:['will','would','should','am'], ans:0, exp:'1er condicional (posible): if + present, will + verb.' },
+      { type:'fill', q:'If I ___ rich, I would travel the world. (be)', ans:'were', exp:'2do condicional (hipotético): if + past (were), would + verb.' },
+      { type:'mc', q:'If she studied more, she ___ pass the exam.', opts:['will','can','would','should'], ans:2, exp:'2do condicional: resultado con "would".' },
+      { type:'mc', q:'What ___ you do if you won the lottery?', opts:['will','would','do','can'], ans:1, exp:'2do condicional en preguntas: would + subject + verb.' },
+    ]
+  },
+  {
+    id:11, title:'Phrasal Verbs', icon:'🧩', color:'#7c3aed',
+    desc:'Los verbos más usados en inglés real', unlockAfter:5,
+    exercises:[
+      { type:'mc', q:'"Can you ___ the music? It\'s too loud."', opts:['turn up','turn down','turn off','turn on'], ans:1, exp:'"Turn down" = bajar el volumen.' },
+      { type:'mc', q:'"I need to ___ this form before the deadline."', opts:['fill in','fill up','fill out','fill on'], ans:2, exp:'"Fill out" = completar un formulario.' },
+      { type:'fill', q:'She ___ early every morning. (get up)', ans:'gets up', exp:'"Get up" = levantarse. Con 3ª persona agrega -s.' },
+      { type:'mc', q:'"Don\'t ___ your dreams!"', opts:['give in','give up','give out','give off'], ans:1, exp:'"Give up" = rendirse, abandonar.' },
+      { type:'mc', q:'"I ___ an old friend at the supermarket."', opts:['ran into','ran away','ran out','ran up'], ans:0, exp:'"Run into" = encontrarse accidentalmente con alguien.' },
+    ]
+  },
+  {
+    id:12, title:'Escucha Avanzada', icon:'🎧', color:'#0891b2',
+    desc:'Diálogos rápidos y naturales', unlockAfter:6,
+    exercises:[
+      { type:'listen', text:"I've been working here for about five years now, and honestly I still love coming to work every day. The team is great.", q:'How long has the person worked there?', opts:['Two years','Three years','Five years','Ten years'], ans:2 },
+      { type:'listen', text:"So I was thinking, what if we moved the meeting to Thursday instead? That way everyone has more time to prepare their presentations.", q:'What is being suggested?', opts:['Cancel the meeting','Move the meeting to Thursday','Prepare presentations now','Start the meeting earlier'], ans:1 },
+      { type:'listen', text:"The restaurant is fully booked this Friday, but we do have availability on Saturday evening from seven o\'clock onwards.", q:'When is there availability?', opts:['Friday evening','Saturday morning','Saturday evening','Sunday afternoon'], ans:2 },
+      { type:'listen', text:"Despite the heavy traffic, she managed to arrive at the airport with just fifteen minutes to spare before her flight took off.", q:'How much time did she have before her flight?', opts:['5 minutes','15 minutes','30 minutes','45 minutes'], ans:1 },
+      { type:'listen', text:"If you take the second exit on the roundabout and then turn left at the traffic lights, you\'ll see the hotel on your right.", q:'Where is the hotel?', opts:['On the left after the roundabout','On the right after the traffic lights','Before the roundabout','Straight ahead'], ans:1 },
+    ]
+  },
 ];
 
 const ACHIEVEMENTS = [
@@ -1025,6 +1110,8 @@ function defaultState(name){
     currentLesson: null,
     currentExIdx: 0,
     sessionScore: { correct: 0, total: 0 },
+    mistakes: [],
+    dailyChallenge: null,
   };
 }
 
@@ -1220,6 +1307,33 @@ function updateUI(){
 function renderHome(){
   updateUI();
   el('home-name').textContent = state.name || currentUser || 'Learner';
+
+  // Daily challenge card
+  const today = new Date().toDateString();
+  const dc = state.dailyChallenge;
+  const dcDone = dc?.date === today && dc?.completed;
+  const dcStarted = dc?.date === today && !dc?.completed;
+  const challengeBar = el('challenge-bar');
+  const challengeSub = el('challenge-sub');
+  const challengeStatus = el('challenge-status');
+  if(dcDone){
+    challengeBar.style.width = '100%';
+    challengeSub.textContent = `Completado · ${dc.score}/5 correctas ✓`;
+    challengeStatus.textContent = '✅';
+    el('daily-challenge-card').style.opacity = '0.6';
+    el('daily-challenge-card').style.cursor = 'default';
+  } else if(dcStarted){
+    const prog = exerciseQueueIdx || 0;
+    challengeBar.style.width = (prog/5*100) + '%';
+    challengeSub.textContent = `En progreso · ${prog}/5 preguntas`;
+    challengeStatus.textContent = '▶';
+  } else {
+    challengeBar.style.width = '0%';
+    challengeSub.textContent = '5 preguntas · Gana 75 XP extra';
+    challengeStatus.textContent = '›';
+    el('daily-challenge-card').style.opacity = '1';
+    el('daily-challenge-card').style.cursor = 'pointer';
+  }
 
   // Streak calendar (last 7 days)
   const cal = el('streak-cal');
@@ -1553,37 +1667,135 @@ function speakVocabWord(){
 /* ═══════════════════════════════════════════════════════════
    LESSONS
 ════════════════════════════════════════════════════════════ */
+function isLessonUnlocked(lesson){
+  if(!lesson.unlockAfter) return true;
+  const prev = state.lessonProgress[lesson.unlockAfter] || 0;
+  const prevLesson = LESSONS.find(l => l.id === lesson.unlockAfter);
+  return prevLesson && prev >= prevLesson.exercises.length;
+}
+
 function renderLessons(){
   const list = el('lessons-list');
   list.innerHTML = '';
-  LESSONS.forEach(lesson => {
-    const prog = state.lessonProgress[lesson.id] || 0;
-    const pct = Math.round(prog / lesson.exercises.length * 100);
-    const stars = prog >= lesson.exercises.length ? '⭐⭐⭐' : prog > 0 ? '⭐⭐' : '⭐';
-    const div = document.createElement('div');
-    div.className = 'lesson-card';
-    div.onclick = () => startLesson(lesson.id);
-    div.innerHTML = `
-      <div class="lesson-icon" style="background:${lesson.color}22;color:${lesson.color};">${lesson.icon}</div>
+
+  // ── Desafío diario ──
+  const today = new Date().toDateString();
+  const dc = state.dailyChallenge;
+  const dcDone = dc?.date === today && dc?.completed;
+  const dcCard = document.createElement('div');
+  dcCard.className = 'lesson-card';
+  dcCard.style.borderColor = dcDone ? 'var(--border)' : 'rgba(251,191,36,.4)';
+  dcCard.style.opacity = dcDone ? '0.6' : '1';
+  dcCard.onclick = () => startDailyChallenge();
+  dcCard.innerHTML = `
+    <div class="lesson-icon" style="background:rgba(251,191,36,.15);color:var(--gold);">⚡</div>
+    <div class="lesson-info">
+      <div class="lesson-title">Desafío del día</div>
+      <div class="lesson-desc">${dcDone ? `Completado · ${dc.score}/5 correctas` : '5 preguntas mixtas · +75 XP'}</div>
+      <div class="lesson-meta">
+        ${dcDone ? '<span class="badge badge-green">✓ Listo</span>' : '<span class="badge badge-orange">Disponible</span>'}
+      </div>
+    </div>
+    <div class="lesson-arrow">${dcDone ? '✅' : '›'}</div>
+  `;
+  list.appendChild(dcCard);
+
+  // ── Repasar errores ──
+  const pending = (state.mistakes||[]).filter(m => !m.mastered);
+  if(pending.length > 0){
+    const reviewCard = document.createElement('div');
+    reviewCard.className = 'lesson-card';
+    reviewCard.style.borderColor = 'rgba(244,63,94,.35)';
+    reviewCard.onclick = () => startMistakeReview();
+    reviewCard.innerHTML = `
+      <div class="lesson-icon" style="background:rgba(244,63,94,.15);color:var(--red);">🔁</div>
       <div class="lesson-info">
-        <div class="lesson-title">${lesson.title}</div>
-        <div class="lesson-desc">${lesson.desc}</div>
+        <div class="lesson-title">Repasar mis errores</div>
+        <div class="lesson-desc">Practica hasta dominarlos</div>
         <div class="lesson-meta">
-          <span class="lesson-stars">${stars}</span>
-          <span class="lesson-count">${lesson.exercises.length} ejercicios</span>
-          ${prog > 0 ? `<span class="badge badge-green">${pct}%</span>` : ''}
+          <span class="badge" style="background:rgba(244,63,94,.15);color:var(--red);">${pending.length} pendiente${pending.length>1?'s':''}</span>
         </div>
-        ${prog > 0 ? `<div class="progress-wrap" style="margin-top:6px;height:4px;"><div class="progress-bar" style="width:${pct}%;background:${lesson.color}"></div></div>` : ''}
       </div>
       <div class="lesson-arrow">›</div>
     `;
-    list.appendChild(div);
+    list.appendChild(reviewCard);
+  }
+
+  const divider = document.createElement('div');
+  divider.style.cssText = 'height:1px;background:var(--border);margin:4px 0 12px;';
+  list.appendChild(divider);
+
+  // Agrupar por nivel
+  const groups = [
+    { label:'🟢 Nivel 1 — Básico', ids:[1,2,3,4,5,6] },
+    { label:'🔵 Nivel 2 — Intermedio', ids:[7,8,9] },
+    { label:'🟣 Nivel 3 — Avanzado', ids:[10,11,12] },
+  ];
+
+  groups.forEach(group => {
+    const groupLessons = LESSONS.filter(l => group.ids.includes(l.id));
+    const anyVisible = groupLessons.some(l => isLessonUnlocked(l) || (state.lessonProgress[l.id]||0) > 0);
+
+    const header = document.createElement('div');
+    header.style.cssText = 'font-size:13px;font-weight:700;color:var(--txt2);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.5px;';
+    header.textContent = group.label;
+    list.appendChild(header);
+
+    groupLessons.forEach(lesson => {
+      const prog = state.lessonProgress[lesson.id] || 0;
+      const pct = Math.round(prog / lesson.exercises.length * 100);
+      const completed = prog >= lesson.exercises.length;
+      const stars = completed ? '⭐⭐⭐' : prog > 0 ? '⭐⭐' : '⭐';
+      const unlocked = isLessonUnlocked(lesson);
+      const prevLesson = lesson.unlockAfter ? LESSONS.find(l => l.id === lesson.unlockAfter) : null;
+
+      const div = document.createElement('div');
+      div.className = 'lesson-card';
+      div.style.opacity = unlocked ? '1' : '0.5';
+      div.style.cursor = unlocked ? 'pointer' : 'default';
+      if(unlocked) div.onclick = () => startLesson(lesson.id);
+      else div.onclick = () => showToast(`🔒 Completa "${prevLesson?.title}" primero`);
+
+      div.innerHTML = `
+        <div class="lesson-icon" style="background:${lesson.color}22;color:${unlocked ? lesson.color : 'var(--txt2)'};">
+          ${unlocked ? lesson.icon : '🔒'}
+        </div>
+        <div class="lesson-info">
+          <div class="lesson-title">${lesson.title}</div>
+          <div class="lesson-desc">${unlocked ? lesson.desc : `Completa "${prevLesson?.title}" para desbloquear`}</div>
+          <div class="lesson-meta">
+            ${unlocked ? `<span class="lesson-stars">${stars}</span>` : ''}
+            <span class="lesson-count">${lesson.exercises.length} ejercicios</span>
+            ${completed ? `<span class="badge badge-green">✓ Completa</span>` : prog > 0 ? `<span class="badge badge-purple">${pct}%</span>` : ''}
+          </div>
+          ${prog > 0 ? `<div class="progress-wrap" style="margin-top:6px;height:4px;"><div class="progress-bar" style="width:${pct}%;background:${lesson.color}"></div></div>` : ''}
+        </div>
+        <div class="lesson-arrow" style="color:${unlocked ? 'var(--txt2)' : 'transparent'}">›</div>
+      `;
+      list.appendChild(div);
+    });
   });
+}
+
+// ── Exercise engine ──────────────────────────────────────
+let exerciseMode = 'lesson'; // 'lesson' | 'daily' | 'review'
+let exerciseQueue = [];
+let exerciseQueueIdx = 0;
+
+function getCurrentEx(){
+  if(exerciseMode === 'lesson'){
+    const lesson = LESSONS.find(l => l.id === state.currentLesson);
+    if(!lesson) return null;
+    const ex = lesson.exercises[state.currentExIdx];
+    return ex ? {...ex, lessonId: lesson.id, exIdx: state.currentExIdx} : null;
+  }
+  return exerciseQueue[exerciseQueueIdx] || null;
 }
 
 function startLesson(id){
   const lesson = LESSONS.find(l => l.id === id);
   if(!lesson) return;
+  exerciseMode = 'lesson';
   state.currentLesson = id;
   state.currentExIdx = 0;
   state.sessionScore = { correct:0, total:0 };
@@ -1591,21 +1803,80 @@ function startLesson(id){
   renderExercise();
 }
 
+function startDailyChallenge(){
+  const today = new Date().toDateString();
+  if(state.dailyChallenge?.date === today && state.dailyChallenge?.completed){
+    showToast('✅ ¡Ya completaste el desafío de hoy!'); return;
+  }
+  // Generar 5 preguntas: 2 de errores (si hay) + resto aleatorias
+  const queue = buildDailyQueue();
+  if(!queue.length){ showToast('Completa algunas lecciones primero'); return; }
+  exerciseMode = 'daily';
+  exerciseQueue = queue;
+  exerciseQueueIdx = 0;
+  state.sessionScore = { correct:0, total:0 };
+  state.dailyChallenge = { date: today, total: queue.length, completed: false, score: 0 };
+  saveState();
+  goTo('exercise');
+  renderExercise();
+}
+
+function buildDailyQueue(){
+  const all = [];
+  LESSONS.forEach(lesson => {
+    if((state.lessonProgress[lesson.id]||0) >= lesson.exercises.length){
+      lesson.exercises.forEach((ex, idx) => all.push({...ex, lessonId: lesson.id, exIdx: idx}));
+    }
+  });
+  if(!all.length) return [];
+  // Incluir errores pendientes primero (hasta 2)
+  const mistakeExs = (state.mistakes||[])
+    .filter(m => !m.mastered)
+    .slice(0,2)
+    .map(m => ({...m.ex, lessonId: m.lessonId, exIdx: m.exIdx, isMistake: true}));
+  // Rellenar con aleatorias hasta 5
+  const shuffled = all.sort(() => Math.random() - 0.5);
+  const fill = shuffled.filter(e => !mistakeExs.some(m => m.lessonId===e.lessonId && m.exIdx===e.exIdx));
+  return [...mistakeExs, ...fill].slice(0, 5);
+}
+
+function startMistakeReview(){
+  const pending = (state.mistakes||[]).filter(m => !m.mastered);
+  if(!pending.length){ showToast('¡Sin errores pendientes! 🎉'); return; }
+  exerciseMode = 'review';
+  exerciseQueue = pending.map(m => ({...m.ex, lessonId: m.lessonId, exIdx: m.exIdx, isMistake: true}));
+  exerciseQueueIdx = 0;
+  state.sessionScore = { correct:0, total:0 };
+  goTo('exercise');
+  renderExercise();
+}
+
 function renderExercise(){
-  const lesson = LESSONS.find(l => l.id === state.currentLesson);
-  if(!lesson) return;
-  const idx = state.currentExIdx;
-  const total = lesson.exercises.length;
-  const ex = lesson.exercises[idx];
+  const ex = getCurrentEx();
+  if(!ex) return;
+
+  let total, idx;
+  if(exerciseMode === 'lesson'){
+    const lesson = LESSONS.find(l => l.id === state.currentLesson);
+    idx = state.currentExIdx; total = lesson.exercises.length;
+  } else {
+    idx = exerciseQueueIdx; total = exerciseQueue.length;
+  }
 
   el('ex-bar').style.width = (idx/total*100) + '%';
   el('ex-count').textContent = (idx+1) + '/' + total;
 
+  // Mode label in back button
+  const modeLabel = exerciseMode === 'daily' ? '⚡ Desafío' : exerciseMode === 'review' ? '🔁 Repaso' : '';
+  document.querySelector('.exercise-header .back-btn').title = 'Salir';
+
   const cont = el('exercise-content');
+  const mistakeBadge = ex.isMistake ? `<div style="font-size:11px;color:var(--orange);font-weight:700;margin-bottom:6px;">🔁 REPASANDO ERROR</div>` : '';
 
   if(ex.type === 'mc' || ex.type === 'fill'){
     cont.innerHTML = `
       <div class="question-card">
+        ${mistakeBadge}
         <div class="question-type">${ex.type === 'mc' ? 'Opción múltiple' : 'Completar el espacio'}</div>
         <div class="question-text">${formatQuestion(ex.q)}</div>
       </div>
@@ -1622,6 +1893,7 @@ function renderExercise(){
   } else if(ex.type === 'listen'){
     cont.innerHTML = `
       <div class="question-card">
+        ${mistakeBadge}
         <div class="question-type">Comprensión auditiva</div>
         <div style="text-align:center;margin-bottom:16px;">
           <button class="btn btn-secondary" style="width:auto;" onclick="playListenAudio()">🔊 Reproducir audio</button>
@@ -1638,9 +1910,7 @@ function renderExercise(){
 }
 
 function playListenAudio(){
-  const lesson = LESSONS.find(l => l.id === state.currentLesson);
-  if(!lesson) return;
-  const ex = lesson.exercises[state.currentExIdx];
+  const ex = getCurrentEx();
   if(!ex || !ex.text) return;
   speak(ex.text, 0.85);
 }
@@ -1650,38 +1920,53 @@ function formatQuestion(q){
 }
 
 function selectOption(idx){
-  const lesson = LESSONS.find(l => l.id === state.currentLesson);
-  const ex = lesson.exercises[state.currentExIdx];
+  const ex = getCurrentEx();
+  if(!ex) return;
   const btns = document.querySelectorAll('.option-btn');
   btns.forEach(b => b.disabled = true);
   btns[idx].classList.add(idx === ex.ans ? 'correct' : 'wrong');
   if(idx !== ex.ans) btns[ex.ans].classList.add('correct');
-
   const correct = idx === ex.ans;
   showFeedback(correct, ex.exp || (correct ? '¡Correcto!' : 'La respuesta correcta está resaltada en verde.'));
-  recordAnswer(correct);
+  recordAnswer(correct, ex);
 }
 
 function checkFill(){
   const inp = el('fill-input');
   if(!inp) return;
-  const lesson = LESSONS.find(l => l.id === state.currentLesson);
-  const ex = lesson.exercises[state.currentExIdx];
+  const ex = getCurrentEx();
+  if(!ex) return;
   const userAns = inp.value.trim().toLowerCase();
   const correct = userAns === ex.ans.toLowerCase() || stringSimilarity(userAns, ex.ans.toLowerCase()) > 0.85;
   inp.disabled = true;
   inp.style.borderColor = correct ? 'var(--green)' : 'var(--red)';
   if(!correct) inp.value += '  →  ' + ex.ans;
   showFeedback(correct, ex.exp);
-  recordAnswer(correct);
+  recordAnswer(correct, ex);
 }
 
-function recordAnswer(correct){
+function recordAnswer(correct, ex){
   state.totalAnswered++;
   if(correct) state.totalCorrect++;
   state.sessionScore.total++;
   if(correct) state.sessionScore.correct++;
+  trackMistake(correct, ex);
   el('next-btn-wrap').style.display = 'block';
+}
+
+function trackMistake(correct, ex){
+  if(!ex || ex.lessonId == null) return;
+  if(!state.mistakes) state.mistakes = [];
+  const key = `${ex.lessonId}_${ex.exIdx}`;
+  const existing = state.mistakes.find(m => m.key === key);
+  if(!correct){
+    if(existing){ existing.wrongCount++; existing.correctStreak = 0; }
+    else state.mistakes.push({ key, lessonId: ex.lessonId, exIdx: ex.exIdx, ex, wrongCount:1, correctStreak:0, mastered:false });
+  } else if(existing && !existing.mastered){
+    existing.correctStreak++;
+    if(existing.correctStreak >= 2) existing.mastered = true;
+  }
+  saveState();
 }
 
 function showFeedback(correct, exp){
@@ -1693,19 +1978,37 @@ function showFeedback(correct, exp){
 }
 
 function nextExercise(){
-  const lesson = LESSONS.find(l => l.id === state.currentLesson);
-  state.currentExIdx++;
-
-  if(state.currentExIdx >= lesson.exercises.length){
-    // Lesson complete
-    if(!state.lessonProgress) state.lessonProgress = {};
-    state.lessonProgress[lesson.id] = lesson.exercises.length;
-    saveState();
-    checkAchievements();
-    showLessonComplete(lesson);
+  if(exerciseMode === 'lesson'){
+    const lesson = LESSONS.find(l => l.id === state.currentLesson);
+    state.currentExIdx++;
+    if(state.currentExIdx >= lesson.exercises.length){
+      if(!state.lessonProgress) state.lessonProgress = {};
+      state.lessonProgress[lesson.id] = lesson.exercises.length;
+      saveState(); checkAchievements();
+      showLessonComplete(lesson);
+    } else { renderExercise(); }
   } else {
-    renderExercise();
+    exerciseQueueIdx++;
+    if(exerciseQueueIdx >= exerciseQueue.length){
+      finishQueueSession();
+    } else { renderExercise(); }
   }
+}
+
+function finishQueueSession(){
+  const sc = state.sessionScore;
+  const xpBonus = exerciseMode === 'daily' ? 25 : 10;
+  addXP(xpBonus);
+  if(exerciseMode === 'daily'){
+    state.dailyChallenge.completed = true;
+    state.dailyChallenge.score = sc.correct;
+    saveState();
+  }
+  const pct = sc.total > 0 ? Math.round(sc.correct/sc.total*100) : 0;
+  const title = exerciseMode === 'daily' ? '⚡ ¡Desafío completado!' : '🔁 ¡Repaso completado!';
+  el('modal-title').textContent = title;
+  el('modal-body').innerHTML = `Precisión: <strong>${pct}%</strong> (${sc.correct}/${sc.total})<br/>XP ganado: <strong>+${sc.correct*10 + xpBonus} XP</strong>`;
+  el('lesson-modal').classList.remove('hidden');
 }
 
 function showLessonComplete(lesson){
@@ -1722,7 +2025,9 @@ function showLessonComplete(lesson){
 
 function closeModal(){
   el('lesson-modal').classList.add('hidden');
-  goTo('lessons');
+  const dest = (exerciseMode === 'daily' || exerciseMode === 'review') ? 'home' : 'lessons';
+  exerciseMode = 'lesson';
+  goTo(dest);
 }
 
 /* ═══════════════════════════════════════════════════════════
