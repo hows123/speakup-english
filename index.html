@@ -1274,13 +1274,41 @@ function nextWord(){
   showSpeakWord();
 }
 
+function getBestVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  const priority = [
+    'Google US English',
+    'Google UK English Female',
+    'Google UK English Male',
+    'Samantha',
+    'Alex',
+    'Karen',
+    'Daniel',
+  ];
+  for(const name of priority){
+    const v = voices.find(v => v.name === name);
+    if(v) return v;
+  }
+  return voices.find(v => v.lang.startsWith('en') && !v.localService) ||
+         voices.find(v => v.lang.startsWith('en')) ||
+         null;
+}
+
+function speak(text, rate = 0.88){
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = rate;
+  utter.pitch = 1;
+  const voice = getBestVoice();
+  if(voice) utter.voice = voice;
+  window.speechSynthesis.speak(utter);
+}
+
 function speakWord(){
   const item = speakList[speakIndex];
   if(!item) return;
-  const utter = new SpeechSynthesisUtterance(item.text);
-  utter.lang = 'en-US'; utter.rate = 0.8;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
+  speak(item.text, 0.82);
 }
 
 function toggleRecording(){
@@ -1481,10 +1509,7 @@ function nextVocab(){
 function speakVocabWord(){
   const item = vocabList[vocabIdx];
   if(!item) return;
-  const u = new SpeechSynthesisUtterance(item.word);
-  u.lang = 'en-US'; u.rate = 0.85;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
+  speak(item.word, 0.82);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1579,10 +1604,7 @@ function playListenAudio(){
   if(!lesson) return;
   const ex = lesson.exercises[state.currentExIdx];
   if(!ex || !ex.text) return;
-  const u = new SpeechSynthesisUtterance(ex.text);
-  u.lang = 'en-US'; u.rate = 0.85;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
+  speak(ex.text, 0.85);
 }
 
 function formatQuestion(q){
